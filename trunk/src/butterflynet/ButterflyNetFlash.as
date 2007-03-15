@@ -1,9 +1,9 @@
 package edu.stanford.hci
 {
-	public class ButterflyNet2
+	public class ButterflyNetFlash
 	{
 			
-		public function ButterflyNet2():void {
+		public function ButterflyNetFlash():void {
 			trace("constructor!");
 		}
 

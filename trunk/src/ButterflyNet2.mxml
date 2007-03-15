@@ -1,18 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="1024" height="600" backgroundGradientColors="[#292929, #646464]">
 	<mx:Panel x="10" y="10" width="642" height="580" layout="absolute">
-		<mx:Button label="Generate Photo Thumbnails" fontSize="12" x="10" y="10" click="clickHandler(event);"/>
+		<mx:Button label="Generate Photo Thumbnails" fontSize="12" x="10" y="10" click="toggleFullScreen(event);"/>
 	</mx:Panel>
 	<mx:Script>
 		<![CDATA[
 			import flash.events.MouseEvent;
-			import edu.stanford.hci.ButterflyNet2;
+			import butterflynet.ButterflyNetFlash;
+			import flash.display.StageDisplayState;
 			
-			private var bnet:ButterflyNet2 = new ButterflyNet2();
+			private var bnet:ButterflyNetFlash = new ButterflyNetFlash();
+
+			private var fullScreen:Boolean = false;
 
 			private function clickHandler(event:MouseEvent):void {
 				trace("clickHandler");
+				bnet.test();
 			}
+			
+			private function toggleFullScreen(event:MouseEvent):void {
+				trace("toggleFullScreen");
+				if (fullScreen) {
+					stage.displayState = StageDisplayState.NORMAL;
+				} else {
+					stage.displayState = StageDisplayState.FULL_SCREEN;
+				}
+				fullScreen = !fullScreen;
+			}
+
 		]]>
 	</mx:Script>
 </mx:Application>
