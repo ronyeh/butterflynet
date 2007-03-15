@@ -1,4 +1,4 @@
-package edu.stanford.hci
+package butterflynet
 {
 	public class ButterflyNetFlash
 	{
