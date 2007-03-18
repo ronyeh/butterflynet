@@ -13,5 +13,8 @@
 	<classpathentry kind="lib" path="/PaperToolkit/lib/fmj/mp3spi1.9.4.jar"/>
 	<classpathentry kind="lib" path="/PaperToolkit/lib/fmj/tritonus_share.jar"/>
 	<classpathentry kind="lib" path="/PaperToolkit/lib/fmj/vorbisspi1.0.2.jar"/>
+	<classpathentry kind="lib" path="/PaperToolkit/lib/jai/jai_codec.jar"/>
+	<classpathentry kind="lib" path="/PaperToolkit/lib/jai/jai_core.jar"/>
+	<classpathentry kind="lib" path="/PaperToolkit/lib/jai/mlibwrapper_jai.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

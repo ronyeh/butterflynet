@@ -1,12 +1,23 @@
 package butterflynet.content;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
-import net.sf.fmj.ui.application.PlayerPanel;
+import javax.imageio.ImageIO;
+import javax.media.jai.PlanarImage;
+
+import butterflynet.ButterflyNet;
+
 import edu.stanford.hci.r3.util.DebugUtils;
+import edu.stanford.hci.r3.util.SystemUtils;
 import edu.stanford.hci.r3.util.files.FileUtils;
 import edu.stanford.hci.r3.util.files.SortDirection;
+import edu.stanford.hci.r3.util.graphics.ImageCache;
+import edu.stanford.hci.r3.util.graphics.ImageUtils;
+import edu.stanford.hci.r3.util.graphics.JAIUtils;
 
 /**
  * <p>
@@ -22,25 +33,23 @@ import edu.stanford.hci.r3.util.files.SortDirection;
  */
 public class PhotosAndVideosDatabase {
 
-	public PhotosAndVideosDatabase(File photosPath, File settingsPath) {
+	private ButterflyNet butterflyNet;
+
+	public PhotosAndVideosDatabase(ButterflyNet bNet) {
+		butterflyNet = bNet;
+
 		// find all files in docsPath
-		List<File> files = FileUtils.listVisibleFilesRecursively(photosPath);
+		List<File> files = FileUtils.listVisibleFilesRecursively(butterflyNet.getPhotosPath());
 		// DebugUtils.println(files);
 
 		// find the most recent file in docsPath
 		FileUtils.sortPhotosByCaptureDate(files, SortDirection.NEW_TO_OLD);
 
-		// SystemUtils.tic();
-		// for (File f : files) {
-		// DebugUtils.println(f);
-		// }
-		// SystemUtils.toc();
-
 		// check the settings to see what was the last file we had processed...
 		File newestPhoto = files.get(0);
 		DebugUtils.println("Newest photo is: " + newestPhoto);
 
-		createPhotoThumbnails(files);
+		createThumbnails(files);
 	}
 
 	/**
@@ -49,22 +58,42 @@ public class PhotosAndVideosDatabase {
 	 * 
 	 * @param files
 	 */
-	private void createPhotoThumbnails(List<File> files) {
+	private void createThumbnails(List<File> files) {
+
+		// a thumbnail should be stored in Thumbnails/100, 128, 256
+		File thumbnails100Path = butterflyNet.getThumbnails100Path();
+		File thumbnails128Path = butterflyNet.getThumbnails128Path();
+		File thumbnails256Path = butterflyNet.getThumbnails256Path();
+
+		int[] sizes = new int[] { 256, 128, 100 };
+		File[] paths = new File[] { thumbnails256Path, thumbnails128Path, thumbnails100Path };
 
 		for (File f : files) {
-			if (f.getName().toLowerCase().endsWith(".avi")) {
-				DebugUtils.println(f);
-			}
-		}
+			// create a "unique" thumbnail name
+			// if two files have the same name, and same file size, and same mod date, might as well
+			// assume they are the same! I mean, humans would probably say the same!!!
+			String targetThumbnailName = f.getName() + "_" + f.lastModified() + "_" + f.length()
+					+ ".jpg";
 
-		// Failed Attempt at processing video...
-		// Use FMJ instead of JMF (or JVLC)...
-		// file://C:\Documents and Settings\Ron Yeh\My Documents\Projects\ButterflyNet2\MVI_1769.AVI
-		// String movie = "../Data/BNet2Data/Photos & Videos/Ron's/March 22, 2005/MVI_1777.AVI";
-		// File movieFile = new File(movie);
-		// PlayerPanel.main(new String[] {});
-		
-		
-		// create a "unique" thumbnail name based on the current file name,
+			if (ContentType.PHOTO.isFileTypeCompatible(f)) {
+				// if it's a photo, make a thumbnail using ImageUtils
+				// DebugUtils.println(targetThumbnailName);
+
+				PlanarImage image = ImageCache.loadPlanarImage(f);
+				for (int i = 0; i < sizes.length; i++) {
+					SystemUtils.tic();
+					DebugUtils.println(sizes[i]);
+					image = JAIUtils.scaleImageToFit(image, sizes[i], sizes[i]);
+					JAIUtils.writeImageToJPEG(image, new File(paths[i], targetThumbnailName));
+					SystemUtils.toc();
+				}
+			} else if (ContentType.VIDEO.isFileTypeCompatible(f)) {
+				// if it's a video, use ffmpeg to make a thumbnail...
+				// DebugUtils.println(targetThumbnailName);
+				
+//				xxx do this next...
+			}
+
+		}
 	}
 }
