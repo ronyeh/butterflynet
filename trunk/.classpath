@@ -3,5 +3,15 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/PaperToolkit"/>
+	<classpathentry kind="lib" path="/PaperToolkit/lib/fmj/fmj.jar"/>
+	<classpathentry kind="lib" path="/PaperToolkit/lib/fmj/jdom.jar"/>
+	<classpathentry kind="lib" path="/PaperToolkit/lib/fmj/jffmpeg-1.1.0.jar"/>
+	<classpathentry kind="lib" path="/PaperToolkit/lib/fmj/jl1.0.jar"/>
+	<classpathentry kind="lib" path="/PaperToolkit/lib/fmj/jogg-0.0.7.jar"/>
+	<classpathentry kind="lib" path="/PaperToolkit/lib/fmj/jorbis-0.0.15.jar"/>
+	<classpathentry kind="lib" path="/PaperToolkit/lib/fmj/lti-civil.jar"/>
+	<classpathentry kind="lib" path="/PaperToolkit/lib/fmj/mp3spi1.9.4.jar"/>
+	<classpathentry kind="lib" path="/PaperToolkit/lib/fmj/tritonus_share.jar"/>
+	<classpathentry kind="lib" path="/PaperToolkit/lib/fmj/vorbisspi1.0.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
