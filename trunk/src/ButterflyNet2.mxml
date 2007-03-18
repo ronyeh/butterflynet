@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="1024" height="600" backgroundGradientColors="[#292929, #646464]">
-	<mx:Panel x="10" y="10" width="642" height="580" layout="absolute">
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" backgroundGradientColors="[#292929, #646464]">
+	<mx:Panel width="642" height="580" layout="absolute" verticalCenter="0" horizontalCenter="0">
 		<mx:Button label="Generate Photo Thumbnails" fontSize="12" x="10" y="10" click="toggleFullScreen(event);"/>
 	</mx:Panel>
 	<mx:Script>
