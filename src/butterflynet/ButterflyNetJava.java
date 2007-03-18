@@ -10,7 +10,7 @@ import java.util.Properties;
 
 import butterflynet.content.DocumentsDatabase;
 import butterflynet.content.NotesDatabase;
-import butterflynet.content.PhotosDatabase;
+import butterflynet.content.PhotosAndVideosDatabase;
 import edu.stanford.hci.r3.util.DebugUtils;
 import edu.stanford.hci.r3.util.graphics.SplashScreenUtils;
 
@@ -66,7 +66,7 @@ public class ButterflyNetJava {
 		// start checking for data...
 		// check for notes, photos, and documents
 		new DocumentsDatabase(docsPath, settingsPath);
-		new PhotosDatabase(photosPath, settingsPath);
+		new PhotosAndVideosDatabase(photosPath, settingsPath);
 		new NotesDatabase(notesPath, settingsPath);
 	}
 
