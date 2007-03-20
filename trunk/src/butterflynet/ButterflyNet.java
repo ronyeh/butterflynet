@@ -10,9 +10,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Properties;
 
-import butterflynet.content.DocumentsDatabase;
 import butterflynet.content.NotesDatabase;
-import butterflynet.content.PhotosAndVideosDatabase;
 import edu.stanford.hci.r3.util.DebugUtils;
 import edu.stanford.hci.r3.util.graphics.SplashScreenUtils;
 
@@ -25,6 +23,9 @@ import edu.stanford.hci.r3.util.graphics.SplashScreenUtils;
  * @author <a href="http://graphics.stanford.edu/~ronyeh">Ron B Yeh</a> (ronyeh(AT)cs.stanford.edu)
  */
 public class ButterflyNet {
+
+	private static final String PROPERTY_AUTOMATICALLY_UPDATE_SYNCHED_FILE_TIMESTAMP = "AutomaticallyUpdateSynchedFileTimestamp";
+	private static final String PROPERTY_TIMESTAMP_OF_MOST_RECENTLY_SYNCHED_FILE = "TimestampOfMostRecentlySynchedFile";
 
 	/**
 	 * Just create a new instance! All configuration parameters should be stored in config.ini in
@@ -50,14 +51,27 @@ public class ButterflyNet {
 		new ButterflyNet();
 	}
 
+	/**
+	 * Automatically advance the marker for figuring out which files we have synched.
+	 */
+	private boolean autoUpdateSynchedFileTimestamp = true;
+
 	private File bNetDataPath;
+
+	private File docsPath;
 
 	/**
 	 * Stores the system configuration.
 	 */
-	private final File CONFIG_INI = new File("config.ini");
+	private final File iniFileSystemConfiguration = new File("config.ini");
 
-	private File docsPath;
+	/**
+	 * Stores settings for the particular user (for now, it's just one user). These settings will be
+	 * overwritten on ButterflyNet exit...
+	 */
+	private File iniFileUserSettings;
+
+	private long mostRecentlySynchedTimestamp;
 
 	private File notesPath;
 
@@ -79,10 +93,11 @@ public class ButterflyNet {
 	 */
 	public ButterflyNet() {
 
-		// read the properties
+		// read the properties files, and construct any directories that need to exist
 		readConfigProperties();
+		readUserSettings();
 
-		SplashScreenUtils.animateSplashScreen(5000, new Point2D.Double(227.5, 140));
+		SplashScreenUtils.animateSplashScreen(500 /* 3000 */, new Point2D.Double(227.5, 140));
 
 		// load the GUI
 		// show notes and photos from LAST time... and start populating the data in the background
@@ -91,7 +106,8 @@ public class ButterflyNet {
 		// check for notes, photos, and documents
 		// new DocumentsDatabase(docsPath, settingsPath);
 		// new PhotosAndVideosDatabase(this);
-		new NotesDatabase(notesPath, settingsPath);
+		new NotesDatabase(this, notesPath, settingsPath, mostRecentlySynchedTimestamp,
+				autoUpdateSynchedFileTimestamp);
 	}
 
 	/**
@@ -162,10 +178,10 @@ public class ButterflyNet {
 	private void readConfigProperties() {
 		final Properties configProperties = new Properties();
 
-		if (CONFIG_INI.exists()) {
+		if (iniFileSystemConfiguration.exists()) {
 			try {
 				// read it from disk
-				configProperties.load(new FileInputStream(CONFIG_INI));
+				configProperties.load(new FileInputStream(iniFileSystemConfiguration));
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -188,6 +204,56 @@ public class ButterflyNet {
 		// check the validity of this directory
 		// it must exist, and contain a few sub directories...
 		checkValidityOfDirectoryStructure(bNetDataPath);
+
+		// get user settings...
+		iniFileUserSettings = new File(settingsPath, "settings.ini");
+	}
+
+	private void readUserSettings() {
+		final Properties settingsProperties = new Properties();
+		if (iniFileUserSettings.exists()) {
+			try {
+				// read it from disk
+				settingsProperties.load(new FileInputStream(iniFileUserSettings));
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			// the timestamp of the most recently synched file
+			final String recentlySynchedTimestamp = settingsProperties.getProperty(
+					PROPERTY_TIMESTAMP_OF_MOST_RECENTLY_SYNCHED_FILE).trim();
+			// DebugUtils.println(recentlySynchedTimestamp);
+			if (!recentlySynchedTimestamp.equals("")) {
+				mostRecentlySynchedTimestamp = Long.parseLong(recentlySynchedTimestamp);
+			}
+
+			final String autoUpdateTimestamp = settingsProperties.getProperty(
+					PROPERTY_AUTOMATICALLY_UPDATE_SYNCHED_FILE_TIMESTAMP).trim();
+			if (!autoUpdateTimestamp.equals("")) {
+				autoUpdateSynchedFileTimestamp = Boolean.parseBoolean(autoUpdateTimestamp);
+			}
+		}
+	}
+
+	public void saveUserSettings() {
+		final Properties settingsProperties = new Properties();
+		settingsProperties.setProperty(PROPERTY_TIMESTAMP_OF_MOST_RECENTLY_SYNCHED_FILE,
+				mostRecentlySynchedTimestamp + "");
+		settingsProperties.setProperty(PROPERTY_AUTOMATICALLY_UPDATE_SYNCHED_FILE_TIMESTAMP,
+				autoUpdateSynchedFileTimestamp + "");
+		try {
+			settingsProperties.store(new FileOutputStream(iniFileUserSettings), "User Settings");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void setMostRecentlySynchedTimestamp(long timestamp) {
+		mostRecentlySynchedTimestamp = timestamp;
 	}
 
 	/**
