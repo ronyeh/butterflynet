@@ -11,6 +11,7 @@
 			private var bnet:ButterflyNetFlash;
 			private var container:UIComponent;
 
+			private var slideTimer:Timer;
 
 
 			private function constructBNet():void {
@@ -31,12 +32,26 @@
 			private function toggleFullScreen(event:MouseEvent):void {
 				trace("toggleFullScreen");
 				if (isFullScreen()) {
+					// stop slideshow
+					// kill the timer
+					slideTimer.stop();
+					slideTimer = null;					
+
 					stage.displayState = StageDisplayState.NORMAL;
 					setVisibilityOfControls(true);
 				} else {
+					// start slideshow
+					slideTimer = new Timer(1200);
+					slideTimer.addEventListener(TimerEvent.TIMER, timerHandler);
+					slideTimer.start();
+
 					stage.displayState = StageDisplayState.FULL_SCREEN;
 					setVisibilityOfControls(false);
 				}
+			}
+			
+			private function timerHandler(event:TimerEvent):void {
+				bnet.next();
 			}
 
 			public function setVisibilityOfControls(vis:Boolean):void {
