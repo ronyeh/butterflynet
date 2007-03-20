@@ -1,6 +1,7 @@
 package butterflynet;
 
 import java.awt.Desktop;
+import java.awt.SplashScreen;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,6 +12,7 @@ import java.io.PrintStream;
 import java.util.Properties;
 
 import butterflynet.content.NotesDatabase;
+import butterflynet.navigation.PageNavigationServer;
 import edu.stanford.hci.r3.util.DebugUtils;
 import edu.stanford.hci.r3.util.graphics.SplashScreenUtils;
 
@@ -58,6 +60,8 @@ public class ButterflyNet {
 
 	private File bNetDataPath;
 
+	private File clustersPath;
+
 	private File docsPath;
 
 	/**
@@ -75,6 +79,8 @@ public class ButterflyNet {
 
 	private File notesPath;
 
+	private File pagesPath;
+
 	private File photosPath;
 
 	private File settingsPath;
@@ -82,10 +88,10 @@ public class ButterflyNet {
 	private File thumbs100Path;
 
 	private File thumbs128Path;
-
 	private File thumbs256Path;
-
 	private File thumbsPath;
+	private PageNavigationServer pageNavigationServer;
+	private NotesDatabase notesDatabase;
 
 	/**
 	 * The splash screen is shown at startup, before the JVM is invoked! See the program
@@ -97,17 +103,21 @@ public class ButterflyNet {
 		readConfigProperties();
 		readUserSettings();
 
-		SplashScreenUtils.animateSplashScreen(500 /* 3000 */, new Point2D.Double(227.5, 140));
-
-		// load the GUI
-		// show notes and photos from LAST time... and start populating the data in the background
+		// seems to interact with the showFlashGUI method... They are more serial than I'd like...
+		SplashScreenUtils.animateSplashScreen(2000, new Point2D.Double(227.5, 140));
 
 		// start checking for data...
 		// check for notes, photos, and documents
 		// new DocumentsDatabase(docsPath, settingsPath);
 		// new PhotosAndVideosDatabase(this);
-		new NotesDatabase(this, notesPath, settingsPath, mostRecentlySynchedTimestamp,
-				autoUpdateSynchedFileTimestamp);
+		notesDatabase = new NotesDatabase(this, notesPath, settingsPath,
+				mostRecentlySynchedTimestamp, autoUpdateSynchedFileTimestamp);
+
+		// load the local page navigation server
+		pageNavigationServer = new PageNavigationServer(notesDatabase);
+
+		// finally, load the GUI and show the notes, photos, etc...
+		showFlashGUI();
 	}
 
 	/**
@@ -123,6 +133,9 @@ public class ButterflyNet {
 
 		// BNet2Data/Notes
 		notesPath = new File(dataPath, "Notes");
+
+		pagesPath = new File(notesPath, "Pages");
+		clustersPath = new File(notesPath, "Clusters");
 
 		// BNet2Data/Photos
 		photosPath = new File(dataPath, "Photos & Videos");
@@ -142,14 +155,22 @@ public class ButterflyNet {
 		thumbs256Path = new File(thumbsPath, "256");
 
 		// make a list of directories to check
-		final File[] makeTheseDirs = new File[] { notesPath, photosPath, docsPath, settingsPath,
-				thumbsPath, thumbs100Path, thumbs128Path, thumbs256Path };
+		final File[] makeTheseDirs = new File[] { notesPath, pagesPath, clustersPath, photosPath,
+				docsPath, settingsPath, thumbsPath, thumbs100Path, thumbs128Path, thumbs256Path };
 		for (File dir : makeTheseDirs) {
 			if (!dir.exists()) {
 				DebugUtils.println(dir.getName() + " path does not exist. Making the directory.");
 				dir.mkdirs();
 			}
 		}
+	}
+
+	public File getClustersPath() {
+		return clustersPath;
+	}
+
+	public File getPagesPath() {
+		return pagesPath;
 	}
 
 	public File getPhotosPath() {
@@ -260,13 +281,18 @@ public class ButterflyNet {
 	 * Opens the HTML page containing the Flex/Flash GUI.
 	 */
 	private void showFlashGUI() {
-		try {
-			if (Desktop.isDesktopSupported()) {
-				Desktop desktop = Desktop.getDesktop();
-				desktop.browse(new File("bin/ButterflyNet2.html").toURI());
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					if (Desktop.isDesktopSupported()) {
+						Desktop desktop = Desktop.getDesktop();
+						desktop.browse(new File("bin/ButterflyNet2.html").toURI());
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		}).start();
 	}
 }

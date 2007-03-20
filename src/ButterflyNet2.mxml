@@ -1,33 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" backgroundGradientColors="[#292929, #646464]">
-	<mx:Panel width="642" height="580" layout="absolute" verticalCenter="0" horizontalCenter="0">
-		<mx:Button label="Generate Photo Thumbnails" fontSize="12" x="10" y="10" click="toggleFullScreen(event);"/>
-	</mx:Panel>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" backgroundGradientColors="[#292929, #292929]" pageTitle="ButterflyNet2" creationComplete="constructBNet()">
+	<mx:Style source="styles/styles.css"/>
 	<mx:Script>
 		<![CDATA[
+			import mx.core.UIComponent;
 			import flash.events.MouseEvent;
 			import butterflynet.ButterflyNetFlash;
 			import flash.display.StageDisplayState;
 			
-			private var bnet:ButterflyNetFlash = new ButterflyNetFlash();
+			private var bnet:ButterflyNetFlash;
+			private var container:UIComponent;
 
-			private var fullScreen:Boolean = false;
+
+
+			private function constructBNet():void {
+				container = new UIComponent();
+				addChild(container);
+				bnet = new ButterflyNetFlash();
+				container.addChild(bnet);
+			}
 
 			private function clickHandler(event:MouseEvent):void {
 				trace("clickHandler");
-				bnet.test();
+			}
+			
+			private function isFullScreen():Boolean {
+				return stage.displayState == StageDisplayState.FULL_SCREEN;
 			}
 			
 			private function toggleFullScreen(event:MouseEvent):void {
 				trace("toggleFullScreen");
-				if (fullScreen) {
+				if (isFullScreen()) {
 					stage.displayState = StageDisplayState.NORMAL;
+					setVisibilityOfControls(true);
 				} else {
 					stage.displayState = StageDisplayState.FULL_SCREEN;
+					setVisibilityOfControls(false);
 				}
-				fullScreen = !fullScreen;
 			}
 
+			public function setVisibilityOfControls(vis:Boolean):void {
+				showByComboBox.visible = vis;
+				relatedContentPanel.visible = vis;
+				zoomInButton.visible = vis;
+				zoomOutButton.visible = vis;
+				zoomDefaultButton.visible = vis;
+			}
+			
+			public function zoomIn():void {
+				bnet.scaleX *= 1.25;
+				bnet.scaleY *= 1.25;
+			}
+			public function resetZoom():void {
+				bnet.scaleX = 1;
+				bnet.scaleY = 1;
+				bnet.recenter();
+			}
+			public function zoomOut():void {
+				bnet.scaleX *= .8;
+				bnet.scaleY *= .8;
+			}
+
+			public function thinnerStrokes():void {
+				bnet.thinnerStrokes();
+			}
+			public function widerStrokes():void {
+				bnet.widerStrokes();
+			}
+			
 		]]>
 	</mx:Script>
+	<mx:Panel layout="absolute" right="10" title="Related Content" bottom="10" width="150" top="10" id="relatedContentPanel">
+	</mx:Panel>
+	<mx:Button label="Slide Show" click="toggleFullScreen(event);" bottom="10" left="10" id="slideShowButton"/>
+	<mx:ComboBox right="168" top="10" color="#000000" id="showByComboBox">
+		<mx:ArrayCollection id="showNotesAs">
+			<mx:Object label="Pages" data="ShowPages"/>
+			<mx:Object label="Clusters" data="ShowClusters"/>
+		</mx:ArrayCollection>
+	</mx:ComboBox>
+	<mx:HBox top="10" left="10">
+		<mx:Button label="-" id="zoomOutButton" click="zoomOut()"/>
+		<mx:Button label="100%" id="zoomDefaultButton" click="resetZoom()"/>
+		<mx:Button label="+" id="zoomInButton" click="zoomIn()"/>
+	</mx:HBox>
+	<mx:HBox left="10" bottom="40">
+		<mx:Button label="&lt;" id="prevButton" fontWeight="bold" bottom="10" right="216" click="bnet.prev()"/>
+		<mx:Button label="&gt;" id="nextButton" fontWeight="bold" bottom="10" right="168" click="bnet.next()"/>
+	</mx:HBox>
 </mx:Application>
