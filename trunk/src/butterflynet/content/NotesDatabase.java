@@ -4,8 +4,12 @@ import java.io.File;
 import java.util.List;
 
 import butterflynet.ButterflyNet;
+import edu.stanford.hci.r3.pattern.coordinates.PageAddress;
+import edu.stanford.hci.r3.pen.batch.PenSynch;
 import edu.stanford.hci.r3.pen.batch.PenSynchManager;
+import edu.stanford.hci.r3.pen.ink.Ink;
 import edu.stanford.hci.r3.util.DebugUtils;
+import edu.stanford.hci.r3.util.files.FileUtils;
 
 /**
  * <p>
@@ -21,11 +25,14 @@ import edu.stanford.hci.r3.util.DebugUtils;
  */
 public class NotesDatabase {
 
+	private boolean autoUpdateTimestamps;
 	/**
 	 * Access to the parent BNet instance.
 	 */
 	private ButterflyNet bnet;
-	private boolean autoUpdateTimestamps;
+	private int currentPageIndex;
+	private List<File> pageDirs;
+	private File pagesPath;
 
 	/**
 	 * @param butterflyNet
@@ -37,6 +44,7 @@ public class NotesDatabase {
 	public NotesDatabase(ButterflyNet butterflyNet, File notesPath, File settingsPath,
 			long mostRecentlySynchedTimestamp, boolean autoUpdateSynchedFileTimestamp) {
 		bnet = butterflyNet;
+		pagesPath = bnet.getPagesPath();
 		// DebugUtils.println(notesPath + " " + settingsPath);
 
 		autoUpdateTimestamps = autoUpdateSynchedFileTimestamp;
@@ -45,6 +53,31 @@ public class NotesDatabase {
 		List<File> newlySynchedFiles = penSynchManager
 				.getFilesNewerThan(mostRecentlySynchedTimestamp);
 		processNewFiles(newlySynchedFiles);
+
+		// now, figure out what pages exist... and maintain a list that we can navigate
+		buildDatabaseOfPages();
+	}
+
+	private void buildDatabaseOfPages() {
+		pageDirs = FileUtils.listVisibleDirs(pagesPath);
+		DebugUtils.println("Found these Pages: " + pageDirs);
+		currentPageIndex = 0;
+	}
+
+	public File getNextPageDir() {
+		currentPageIndex++;
+		if (currentPageIndex == pageDirs.size()) {
+			currentPageIndex = 0; // wrap
+		}
+		return pageDirs.get(currentPageIndex);
+	}
+
+	public File getPrevPageDir() {
+		currentPageIndex--;
+		if (currentPageIndex < 0) {
+			currentPageIndex = pageDirs.size() - 1; // wrap
+		}
+		return pageDirs.get(currentPageIndex);
 	}
 
 	private void processNewFiles(List<File> newlySynchedFiles) {
@@ -52,14 +85,45 @@ public class NotesDatabase {
 		for (File f : newlySynchedFiles) {
 			DebugUtils.println("Processing New File: " + f);
 
+			PenSynch penSynch = new PenSynch(f);
+			List<Ink> importedInk = penSynch.getImportedInk();
+			for (Ink ink : importedInk) {
+
+				DebugUtils.println("Processing ink from: " + ink.getSourcePageAddress());
+				PageAddress address = ink.getSourcePageAddress();
+				String addressStr = address.toString();
+
+				// make the directory to hold this page's synchs. One directory per page (overkill,
+				// yes, but makes things easier)
+				File pageDirectory = new File(pagesPath, "page_" + addressStr);
+				pageDirectory.mkdirs(); // make sure it exists
+
+				// if the destination file exists already, we increment the synchIndex and write a
+				// new file... this enables us to distinguish synchs!
+				int synchIndex = 0;
+				File destFile = new File(pageDirectory, "page_" + addressStr + "_s" + synchIndex
+						+ ".xml");
+				while (destFile.exists()) {
+					synchIndex++;
+					destFile = new File(pageDirectory, "page_" + addressStr + "_s" + synchIndex
+							+ ".xml");
+				}
+				DebugUtils.println("Looking for: " + destFile.getAbsolutePath()
+						+ ". Does it exist? [" + destFile.exists() + "]");
+				// the file had better not exist by this point
+
+				// serialize the ink to that page file!
+				ink.saveToXMLFile(destFile);
+			}
+
 			// once we are done with this file, update the settings with the newest timestamp
 			// (advance the marker)
 			if (autoUpdateTimestamps) {
 				bnet.setMostRecentlySynchedTimestamp(f.lastModified());
 				bnet.saveUserSettings();
 			} else {
-				DebugUtils
-						.println("Automatically Update Synched Timestamps is FALSE. This should normally be TRUE. This mode is only for testing.");
+				DebugUtils.println("Automatically Update Synched Timestamps is FALSE. "
+						+ "This should normally be TRUE. This mode is only for testing.");
 			}
 		}
 	}

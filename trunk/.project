@@ -3,6 +3,7 @@
 	<name>ButterflyNet2</name>
 	<comment></comment>
 	<projects>
+		<project>R3Flash</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -20,5 +21,18 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>com.adobe.flexbuilder.project.flexnature</nature>
 		<nature>com.adobe.flexbuilder.project.actionscriptnature</nature>
+		<nature>org.asdt.core.ASNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>[source path] src</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/Ron Yeh/My Documents/Projects/PaperToolkit/flash/src</location>
+		</link>
+		<link>
+			<name>core</name>
+			<type>2</type>
+			<locationURI>core</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>
