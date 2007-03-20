@@ -8,3 +8,6 @@ March 17, 2:00 PM
 Working on BNet2. Starting with Documents & Photos. Notes will come later, through R3. Spent about 3 hours working on the SplashScreen. =) It really animates like OS X now!
 5:30 PM
 Listing Files and Photographs...
+
+March 18
+Spent about 5 hours getting the Professor's Whiteboard mode working in Flash.
