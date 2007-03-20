@@ -2,6 +2,8 @@ package butterflynet.content;
 
 import java.io.File;
 
+import edu.stanford.hci.r3.util.DebugUtils;
+
 /**
  * <p>
  * 
@@ -17,7 +19,8 @@ import java.io.File;
 public class NotesDatabase {
 
 	public NotesDatabase(File notesPath, File settingsPath) {
-		// TODO Auto-generated constructor stub
+		
+		DebugUtils.println(notesPath + " " + settingsPath);
 	}
 
 }
