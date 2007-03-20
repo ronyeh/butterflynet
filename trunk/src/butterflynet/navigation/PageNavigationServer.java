@@ -91,30 +91,50 @@ public class PageNavigationServer {
 				System.out.println(">> Starting PageNavServer at port: " + serverPort);
 				try {
 					socket = new ServerSocket(serverPort);
-					System.out.println(">> Waiting for a Client...");
-					incoming = socket.accept();
-					System.out.println(">> Flash Client connected.");
-					clientConnected = true;
-					readerIn = new BufferedReader(new InputStreamReader(incoming.getInputStream()));
-					writerOut = new PrintStream(incoming.getOutputStream());
-					// sendMessage("Say EXIT to exit.\r");
-					boolean done = false;
-					while (!done) {
-						String command = readerIn.readLine().trim().toLowerCase();
-						System.out.println(">> Reading a line from the client: [" + command + "]");
-						if (command == null || command.equals("exit")) {
-							done = true;
-							incoming.close();
-						} else if (command.contains("next")) {
-							handleNext();
-						} else if (command.contains("prev")) {
-							handlePrev();
-						} else {
 
+					for (int i = 0; i < 2; i++) {
+						System.out.println(">> Waiting for a Client...");
+						incoming = socket.accept();
+						System.out.println(">> Flash Client connected.");
+						clientConnected = true;
+						readerIn = new BufferedReader(new InputStreamReader(incoming
+								.getInputStream()));
+						writerOut = new PrintStream(incoming.getOutputStream());
+						// sendMessage("Say EXIT to exit.\r");
+						boolean done = false;
+						while (!done) {
+							String command = readerIn.readLine();
+							if (command == null) {
+								done = true;
+								incoming.close();
+							} else {
+								command = command.trim().toLowerCase();
+								System.out.println(">> Reading a line from the client: [" + command
+										+ "]");
+								if (command.equals("exit")) {
+									done = true;
+									incoming.close();
+								} else if (command.contains("next")) {
+									handleNext();
+								} else if (command.contains("prev")) {
+									handlePrev();
+								} else if (command.contains("policy-file-request")) {
+									//waiting = true;
+									String msg = "<?xml version=\"1.0\"?><!DOCTYPE cross-domain-policy SYSTEM \"http://www.macromedia.com/xml/dtds/cross-domain-policy.dtd\">"
+											+ "<!-- Policy file for xmlsocket://socks.mysite.com --><cross-domain-policy><allow-access-from domain=\"*\" to-ports=\"*\" /></cross-domain-policy>";
+									sendMessage(msg);
+									incoming.close();
+									writerOut.close();
+									readerIn.close();
+									done = true;
+								} else {
+									DebugUtils.println("Unhandled command: " + command);
+								}
+							}
 						}
 					}
 				} catch (Exception e) {
-					System.out.println(e);
+					e.printStackTrace();
 				}
 				System.out.println(">> Closing PageNavServer");
 			}

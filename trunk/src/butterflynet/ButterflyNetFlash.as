@@ -9,6 +9,8 @@ package butterflynet
 	import ink.InkStroke;
 	import ink.InkXMLParser;
 	import ink.InkRawXMLParser;
+	import flash.system.System;
+	import flash.system.Security;
 
 
 	public class ButterflyNetFlash extends Sprite {
@@ -51,6 +53,8 @@ package butterflynet
  		public function startListening():void {
 			sock = new XMLSocket();
 			configureListeners(sock);
+			
+			flash.system.Security.loadPolicyFile("xmlsocket://localhost:7545");
 			sock.connect("localhost", 7545);
 		}
 
