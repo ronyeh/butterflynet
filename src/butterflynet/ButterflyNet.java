@@ -1,7 +1,6 @@
 package butterflynet;
 
 import java.awt.Desktop;
-import java.awt.SplashScreen;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileInputStream;
