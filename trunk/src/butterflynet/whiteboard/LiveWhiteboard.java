@@ -1,5 +1,9 @@
 package butterflynet.whiteboard;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+
 import edu.stanford.hci.r3.flash.whiteboard.FlashInkRelayServer;
 import edu.stanford.hci.r3.flash.whiteboard.FlashWhiteboard;
 import edu.stanford.hci.r3.pen.Pen;
@@ -22,6 +26,20 @@ import edu.stanford.hci.r3.pen.streaming.listeners.PenListener;
 public class LiveWhiteboard implements PenListener {
 
 	public static void main(String[] args) {
+		if (args.length > 0) {
+			for (String arg : args) {
+				if (arg.toLowerCase().equals("redirect")) {
+					try {
+						FileOutputStream foserr = new FileOutputStream("stderr.log");
+						System.setErr(new PrintStream(foserr));
+						FileOutputStream fosout = new FileOutputStream("stdout.log");
+						System.setOut(new PrintStream(fosout));
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
 		new LiveWhiteboard();
 	}
 
