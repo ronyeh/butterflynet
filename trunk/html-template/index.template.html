@@ -17,6 +17,21 @@ var requiredMajorVersion = ${version_major};
 var requiredMinorVersion = ${version_minor};
 // Minor version of Flash required
 var requiredRevision = ${version_revision};
+
+function getQueryString() {
+	var queryStr = document.location.search;
+	if (queryStr[0]=='?') {
+		queryStr = queryStr.substr(1,queryStr.length-1);
+	}
+
+	if (queryStr.length == 0) {
+		// default, for testing
+		return "params=none&port=PORT_NUM";
+	} else {
+		return queryStr;
+	}
+}
+
 // -----------------------------------------------------------------------------
 // -->
 </script>
@@ -46,17 +61,17 @@ if ( hasProductInstall && !hasRequestedVersion ) {
 
 	AC_FL_RunContent(
 		"src", "playerProductInstall",
-		"FlashVars", "MMredirectURL="+MMredirectURL+'&MMplayerType='+MMPlayerType+'&MMdoctitle='+MMdoctitle+"",
+		"FlashVars", "MMredirectURL="+MMredirectURL+'&MMplayerType='+MMPlayerType+'&MMdoctitle='+MMdoctitle+"" + "&" + getQueryString(),
 		"width", "${width}",
 		"height", "${height}",
 		"align", "middle",
 		"id", "${application}",
 		"quality", "high",
-		"allowFullScreen", "true",
-		"bgcolor", "${bgcolor}",
+		"bgcolor", "#000000", 
 		"name", "${application}",
 		"allowScriptAccess","sameDomain",
 		"type", "application/x-shockwave-flash",
+		"allowFullScreen","true",
 		"pluginspage", "http://www.adobe.com/go/getflashplayer"
 	);
 } else if (hasRequestedVersion) {
@@ -69,12 +84,12 @@ if ( hasProductInstall && !hasRequestedVersion ) {
 			"align", "middle",
 			"id", "${application}",
 			"quality", "high",
-			"allowFullScreen", "true",
-			"bgcolor", "${bgcolor}",
+			"bgcolor", "#000000",
 			"name", "${application}",
-			"flashvars",'historyUrl=history.htm%3F&lconid=' + lc_id + '',
+			"flashvars",'historyUrl=history.htm%3F&lconid=' + lc_id + '' + "&" + getQueryString(),
 			"allowScriptAccess","sameDomain",
 			"type", "application/x-shockwave-flash",
+			"allowFullScreen","true",
 			"pluginspage", "http://www.adobe.com/go/getflashplayer"
 	);
   } else {  // flash is too old or we can't detect the plugin
@@ -91,10 +106,11 @@ if ( hasProductInstall && !hasRequestedVersion ) {
 			codebase="http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab">
 			<param name="movie" value="${swf}.swf" />
 			<param name="quality" value="high" />
-			<param name="allowFullScreen" value="true" />
-			<param name="bgcolor" value="${bgcolor}" />
+			<param name="bgcolor" value="#000000" />
 			<param name="allowScriptAccess" value="sameDomain" />
-			<embed src="${swf}.swf" quality="high" bgcolor="${bgcolor}"
+			<param name="allowFullScreen" value="true" />
+			<param name="FlashVars" value="javascript:getQueryString();"/>
+			<embed src="${swf}.swf" quality="high" bgcolor="#000000"
 				width="${width}" height="${height}" name="${application}" align="middle"
 				play="true"
 				loop="false"
@@ -102,6 +118,7 @@ if ( hasProductInstall && !hasRequestedVersion ) {
 				allowFullScreen="true"
 				allowScriptAccess="sameDomain"
 				type="application/x-shockwave-flash"
+				FlashVars="javascript:getQueryString();"
 				pluginspage="http://www.adobe.com/go/getflashplayer">
 			</embed>
 	</object>

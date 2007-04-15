@@ -50,21 +50,34 @@ public class NotesDatabase {
 		autoUpdateTimestamps = autoUpdateSynchedFileTimestamp;
 
 		PenSynchManager penSynchManager = new PenSynchManager();
-		List<File> newlySynchedFiles = penSynchManager
-				.getFilesNewerThan(mostRecentlySynchedTimestamp);
+		List<File> newlySynchedFiles = penSynchManager.getFilesNewerThan(mostRecentlySynchedTimestamp);
 		processNewFiles(newlySynchedFiles);
 
 		// now, figure out what pages exist... and maintain a list that we can navigate
 		buildDatabaseOfPages();
 	}
 
+	/**
+	 * 
+	 */
 	private void buildDatabaseOfPages() {
 		pageDirs = FileUtils.listVisibleDirs(pagesPath);
 		DebugUtils.println("Found these Pages: " + pageDirs);
 		currentPageIndex = 0;
 	}
 
+	public File getCurrPageDir() {
+		if (pageDirs.size() == 0) {
+			return new File("."); // a file that says... there are no notes! =)
+		}
+		return pageDirs.get(currentPageIndex);
+	}
+
 	public File getNextPageDir() {
+		if (pageDirs.size() == 0) {
+			return new File("."); // a file that says... there are no notes! =)
+		}
+
 		currentPageIndex++;
 		if (currentPageIndex == pageDirs.size()) {
 			currentPageIndex = 0; // wrap
@@ -73,6 +86,10 @@ public class NotesDatabase {
 	}
 
 	public File getPrevPageDir() {
+		if (pageDirs.size() == 0) {
+			return new File("."); // a file that says... there are no notes! =)
+		}
+
 		currentPageIndex--;
 		if (currentPageIndex < 0) {
 			currentPageIndex = pageDirs.size() - 1; // wrap
@@ -80,6 +97,9 @@ public class NotesDatabase {
 		return pageDirs.get(currentPageIndex);
 	}
 
+	/**
+	 * @param newlySynchedFiles
+	 */
 	private void processNewFiles(List<File> newlySynchedFiles) {
 
 		for (File f : newlySynchedFiles) {
@@ -101,15 +121,13 @@ public class NotesDatabase {
 				// if the destination file exists already, we increment the synchIndex and write a
 				// new file... this enables us to distinguish synchs!
 				int synchIndex = 0;
-				File destFile = new File(pageDirectory, "page_" + addressStr + "_s" + synchIndex
-						+ ".xml");
+				File destFile = new File(pageDirectory, "page_" + addressStr + "_s" + synchIndex + ".xml");
 				while (destFile.exists()) {
 					synchIndex++;
-					destFile = new File(pageDirectory, "page_" + addressStr + "_s" + synchIndex
-							+ ".xml");
+					destFile = new File(pageDirectory, "page_" + addressStr + "_s" + synchIndex + ".xml");
 				}
-				DebugUtils.println("Looking for: " + destFile.getAbsolutePath()
-						+ ". Does it exist? [" + destFile.exists() + "]");
+				DebugUtils.println("Looking for: " + destFile.getAbsolutePath() + ". Does it exist? ["
+						+ destFile.exists() + "]");
 				// the file had better not exist by this point
 
 				// serialize the ink to that page file!

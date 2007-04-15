@@ -1,5 +1,4 @@
-package butterflynet
-{
+package butterflynet {
 
 	import flash.events.*;
 	import flash.net.*;
@@ -12,17 +11,21 @@ package butterflynet
 	import flash.system.System;
 	import flash.system.Security;
 
-
 	public class ButterflyNetFlash extends Sprite {
 
 		private var inkWell:Ink;
 		private var sock:XMLSocket;
 		private var debugText:TextArea;
 		private var currInkStroke:InkStroke;
+		
+		private var theParent:ButterflyNet2;	
 			
+		public function addParent(bnet:ButterflyNet2):void {
+			theParent = bnet;
+		}
 			
 		public function thinnerStrokes():void {
-						
+			
 		}
 
 		public function widerStrokes():void {
@@ -30,6 +33,14 @@ package butterflynet
 		}
 			
 		public function next():void {
+			
+			theParent.img1.visible = (Math.random() > 0.5);
+			theParent.img2.visible = (Math.random() > 0.5);
+			theParent.img3.visible = (Math.random() > 0.5);
+			theParent.img4.visible = (Math.random() > 0.5);
+			theParent.img5.visible = (Math.random() > 0.5);
+			theParent.img6.visible = (Math.random() > 0.5);
+			
 			trace("Sending Next");
 			sock.send("<Next/>\n");
 		}
@@ -73,6 +84,7 @@ package butterflynet
 
         private function connectHandler(event:Event):void {
             trace("connectHandler: " + event);
+			sock.send("connected\n");
         }
 
 		public function recenter():void {
@@ -81,6 +93,7 @@ package butterflynet
 
         private function dataHandler(event:DataEvent):void {
         	var pagesXML:XML = new XML(event.text);
+        	// too much data to trace all the time =)
         	// trace(pagesXML.toXMLString());
         	
         	var parser:InkRawXMLParser = new InkRawXMLParser(pagesXML);
@@ -91,34 +104,6 @@ package butterflynet
         	addChild(inkWell);
         }
         
-        private function dataHandlerOLD(event:DataEvent):void {
-            //trace("dataHandler: " + event);
-            // trace(event.text); // parse the text and assemble InkStrokes...
-            
-            var inkXML:XML = new XML(event.text);
-            // trace("XML: " + inkXML.toXMLString());
-
-			trace(inkXML.@x + " " + inkXML.@y + " " + inkXML.@f + " " + inkXML.@t + " " + inkXML.@p);
-
-			var xVal:Number = parseFloat(inkXML.@x);
-			var yVal:Number = parseFloat(inkXML.@y);
-
-			var penUp:Boolean = inkXML.@p == "U";
-			if (penUp) {
-				// add to the inkWell
-				inkWell.addStroke(currInkStroke);
-
-				// reposition it to the minimum (with some padding) after each stroke
-				inkWell.recenter();
-
-				// start up a new stroke
-   				currInkStroke = new InkStroke();
-			} else {
-				// add samples to the current stroke
-				currInkStroke.addPoint(xVal, yVal, parseFloat(inkXML.@f));
-			}		
-        }
-
         private function ioErrorHandler(event:IOErrorEvent):void {
             trace("ioErrorHandler: " + event);
         }

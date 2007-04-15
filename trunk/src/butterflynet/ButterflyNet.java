@@ -11,6 +11,7 @@ import java.io.PrintStream;
 import java.util.Properties;
 
 import butterflynet.content.NotesDatabase;
+import butterflynet.content.PhotosAndVideosDatabase;
 import butterflynet.navigation.PageNavigationServer;
 import edu.stanford.hci.r3.util.DebugUtils;
 import edu.stanford.hci.r3.util.graphics.SplashScreenUtils;
@@ -29,8 +30,8 @@ public class ButterflyNet {
 	private static final String PROPERTY_TIMESTAMP_OF_MOST_RECENTLY_SYNCHED_FILE = "TimestampOfMostRecentlySynchedFile";
 
 	/**
-	 * Just create a new instance! All configuration parameters should be stored in config.ini in
-	 * the root directory of ButterflyNet2.
+	 * Just create a new instance! All configuration parameters should be stored in config.ini in the root
+	 * directory of ButterflyNet2.
 	 * 
 	 * @param args
 	 */
@@ -91,10 +92,10 @@ public class ButterflyNet {
 	private File thumbsPath;
 	private PageNavigationServer pageNavigationServer;
 	private NotesDatabase notesDatabase;
+	private PhotosAndVideosDatabase photosDatabase;
 
 	/**
-	 * The splash screen is shown at startup, before the JVM is invoked! See the program
-	 * arguments...
+	 * The splash screen is shown at startup, before the JVM is invoked! See the program arguments...
 	 */
 	public ButterflyNet() {
 
@@ -108,9 +109,9 @@ public class ButterflyNet {
 		// start checking for data...
 		// check for notes, photos, and documents
 		// new DocumentsDatabase(docsPath, settingsPath);
-		// new PhotosAndVideosDatabase(this);
-		notesDatabase = new NotesDatabase(this, notesPath, settingsPath,
-				mostRecentlySynchedTimestamp, autoUpdateSynchedFileTimestamp);
+		photosDatabase = new PhotosAndVideosDatabase(this);
+		notesDatabase = new NotesDatabase(this, notesPath, settingsPath, mostRecentlySynchedTimestamp,
+				autoUpdateSynchedFileTimestamp);
 
 		// load the local page navigation server
 		pageNavigationServer = new PageNavigationServer(notesDatabase);
@@ -154,8 +155,8 @@ public class ButterflyNet {
 		thumbs256Path = new File(thumbsPath, "256");
 
 		// make a list of directories to check
-		final File[] makeTheseDirs = new File[] { notesPath, pagesPath, clustersPath, photosPath,
-				docsPath, settingsPath, thumbsPath, thumbs100Path, thumbs128Path, thumbs256Path };
+		final File[] makeTheseDirs = new File[] { notesPath, pagesPath, clustersPath, photosPath, docsPath,
+				settingsPath, thumbsPath, thumbs100Path, thumbs128Path, thumbs256Path };
 		for (File dir : makeTheseDirs) {
 			if (!dir.exists()) {
 				DebugUtils.println(dir.getName() + " path does not exist. Making the directory.");
