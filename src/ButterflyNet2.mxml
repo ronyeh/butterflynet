@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" backgroundGradientColors="[#292929, #292929]" pageTitle="ButterflyNet2" creationComplete="constructBNet()">
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" backgroundGradientColors="[#292929, #292929]" 
+	pageTitle="ButterflyNet2" creationComplete="constructBNet()">
 	<mx:Style source="styles/styles.css"/>
 	<mx:Script>
 		<![CDATA[
@@ -13,12 +14,12 @@
 
 			private var slideTimer:Timer;
 
-
 			private function constructBNet():void {
 				container = new UIComponent();
 				addChild(container);
 				bnet = new ButterflyNetFlash();
 				container.addChild(bnet);
+				bnet.addParent(this);
 			}
 
 			private function clickHandler(event:MouseEvent):void {
@@ -56,7 +57,6 @@
 
 			public function setVisibilityOfControls(vis:Boolean):void {
 				showByComboBox.visible = vis;
-				relatedContentPanel.visible = vis;
 				zoomInButton.visible = vis;
 				zoomOutButton.visible = vis;
 				zoomDefaultButton.visible = vis;
@@ -79,28 +79,55 @@
 			public function thinnerStrokes():void {
 				bnet.thinnerStrokes();
 			}
+			
 			public function widerStrokes():void {
 				bnet.widerStrokes();
 			}
 			
 		]]>
 	</mx:Script>
-	<mx:Panel layout="absolute" right="10" title="Related Content" bottom="10" width="150" top="10" id="relatedContentPanel">
-	</mx:Panel>
-	<mx:Button label="Slide Show" click="toggleFullScreen(event);" bottom="10" left="10" id="slideShowButton"/>
-	<mx:ComboBox right="168" top="10" color="#000000" id="showByComboBox">
+	<mx:ComboBox color="#000000" id="showByComboBox" right="10" width="160" top="10">
 		<mx:ArrayCollection id="showNotesAs">
 			<mx:Object label="Pages" data="ShowPages"/>
 			<mx:Object label="Clusters" data="ShowClusters"/>
+			<mx:Object label="Timeline" data="ShowTimeline"/>
 		</mx:ArrayCollection>
 	</mx:ComboBox>
-	<mx:HBox top="10" left="10">
-		<mx:Button label="-" id="zoomOutButton" click="zoomOut()"/>
-		<mx:Button label="100%" id="zoomDefaultButton" click="resetZoom()"/>
-		<mx:Button label="+" id="zoomInButton" click="zoomIn()"/>
-	</mx:HBox>
-	<mx:HBox left="10" bottom="40">
-		<mx:Button label="&lt;" id="prevButton" fontWeight="bold" bottom="10" right="216" click="bnet.prev()"/>
-		<mx:Button label="&gt;" id="nextButton" fontWeight="bold" bottom="10" right="168" click="bnet.next()"/>
-	</mx:HBox>
+	<mx:VBox left="10" bottom="10">
+		<mx:HBox>
+			<mx:Button label="&lt;" id="prevButton" fontWeight="bold" click="bnet.prev()"/>
+			<mx:Button label="&gt;" id="nextButton" fontWeight="bold" click="bnet.next()"/>
+		</mx:HBox>
+		<mx:Button label="Slide Show" click="toggleFullScreen(event);" id="slideShowButton"/>
+		<mx:HBox>
+			<mx:Button label="-" id="zoomOutButton" click="zoomOut()"/>
+			<mx:Button label="100%" id="zoomDefaultButton" click="resetZoom()"/>
+			<mx:Button label="+" id="zoomInButton" click="zoomIn()"/>
+		</mx:HBox>
+	</mx:VBox>
+
+	<mx:Image id="img1" buttonMode="true" 
+		mouseDown="img1.startDrag();" mouseUp="img1.stopDrag();" x="675" y="206" visible="false">
+		<mx:source>../tempPhotos/Thumbs/img_1551.jpg</mx:source>
+	</mx:Image>
+	<mx:Image id="img2" buttonMode="true" 
+		mouseDown="img2.startDrag();" mouseUp="img2.stopDrag();" x="530" y="323" visible="false">
+		<mx:source>../tempPhotos/Thumbs/img_1552.jpg</mx:source>
+	</mx:Image>
+	<mx:Image id="img3" buttonMode="true" 
+		mouseDown="img3.startDrag();" mouseUp="img3.stopDrag();" x="539" y="489" visible="false">
+		<mx:source>../tempPhotos/Thumbs/img_1560.jpg</mx:source>
+	</mx:Image>
+	<mx:Image id="img4" buttonMode="true" 
+		mouseDown="img4.startDrag();" mouseUp="img4.stopDrag();" x="822" y="500" visible="false">
+		<mx:source>../tempPhotos/Thumbs/img_1566.jpg</mx:source>
+	</mx:Image>
+	<mx:Image id="img5" buttonMode="true" 
+		mouseDown="img5.startDrag();" mouseUp="img5.stopDrag();" x="666" y="421" visible="false">
+		<mx:source>../tempPhotos/Thumbs/img_1567.jpg</mx:source>
+	</mx:Image>
+	<mx:Image id="img6" buttonMode="true" 
+		mouseDown="img6.startDrag();" mouseUp="img6.stopDrag();" x="804" y="301" visible="false">
+		<mx:source>../tempPhotos/Thumbs/img_1559.jpg</mx:source>
+	</mx:Image>
 </mx:Application>

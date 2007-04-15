@@ -1,27 +1,21 @@
 package butterflynet.content;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 
-import javax.imageio.ImageIO;
 import javax.media.jai.PlanarImage;
 
 import butterflynet.ButterflyNet;
-
 import edu.stanford.hci.r3.util.DebugUtils;
 import edu.stanford.hci.r3.util.SystemUtils;
 import edu.stanford.hci.r3.util.files.FileUtils;
 import edu.stanford.hci.r3.util.files.SortDirection;
 import edu.stanford.hci.r3.util.graphics.ImageCache;
-import edu.stanford.hci.r3.util.graphics.ImageUtils;
 import edu.stanford.hci.r3.util.graphics.JAIUtils;
 
 /**
  * <p>
- * 
+ * Manages the Photos and Videos on disk.
  * </p>
  * <p>
  * <span class="BSDLicense"> This software is distributed under the <a
@@ -45,16 +39,18 @@ public class PhotosAndVideosDatabase {
 		// find the most recent file in docsPath
 		FileUtils.sortPhotosByCaptureDate(files, SortDirection.NEW_TO_OLD);
 
-		// check the settings to see what was the last file we had processed...
-		File newestPhoto = files.get(0);
-		DebugUtils.println("Newest photo is: " + newestPhoto);
+		if (files.size() > 0) {
+			// check the settings to see what was the last file we had processed...
+			File newestPhoto = files.get(0);
+			DebugUtils.println("Newest photo is: " + newestPhoto);
 
-		createThumbnails(files);
+			createThumbnails(files);
+		}
 	}
 
 	/**
-	 * Seems like a reasonable list of thumbnail sizes (pixels on the longer side) is... 100 (like
-	 * flickr), 128 pixels (close to facebook's), 256 wide (close to flickr's small).
+	 * Seems like a reasonable list of thumbnail sizes (pixels on the longer side) is... 100 (like flickr),
+	 * 128 pixels (close to facebook's), 256 wide (close to flickr's small).
 	 * 
 	 * @param files
 	 */
@@ -72,8 +68,7 @@ public class PhotosAndVideosDatabase {
 			// create a "unique" thumbnail name
 			// if two files have the same name, and same file size, and same mod date, might as well
 			// assume they are the same! I mean, humans would probably say the same!!!
-			String targetThumbnailName = f.getName() + "_" + f.lastModified() + "_" + f.length()
-					+ ".jpg";
+			String targetThumbnailName = f.getName() + "_" + f.lastModified() + "_" + f.length() + ".jpg";
 
 			if (ContentType.PHOTO.isFileTypeCompatible(f)) {
 				// if it's a photo, make a thumbnail using ImageUtils
@@ -90,8 +85,8 @@ public class PhotosAndVideosDatabase {
 			} else if (ContentType.VIDEO.isFileTypeCompatible(f)) {
 				// if it's a video, use ffmpeg to make a thumbnail...
 				// DebugUtils.println(targetThumbnailName);
-				
-//				xxx do this next...
+
+				// xxx do this next...
 			}
 
 		}

@@ -27,12 +27,7 @@
 		<link>
 			<name>[source path] src</name>
 			<type>2</type>
-			<location>C:/Documents and Settings/Ron Yeh/My Documents/Projects/PaperToolkit/flash/src</location>
-		</link>
-		<link>
-			<name>core</name>
-			<type>2</type>
-			<locationURI>core</locationURI>
+			<location>DOCUMENTS/R3Flash/src</location>
 		</link>
 	</linkedResources>
 </projectDescription>
