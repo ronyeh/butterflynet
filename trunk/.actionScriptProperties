@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<actionScriptProperties version="1" mainApplicationPath="ButterflyNet2.mxml">
+<actionScriptProperties version="1" mainApplicationPath="Launcher.mxml">
   <compiler additionalCompilerArguments="-locale en_US" copyDependentFiles="true" generateAccessible="false" strict="true" warn="true" htmlGenerate="true" htmlPlayerVersionCheck="true" htmlPlayerVersion="9.0.0" htmlExpressInstall="true" htmlHistoryManagement="true" outputFolderPath="bin" sourceFolderPath="src">
     <compilerSourcePath>
       <compilerSourcePathEntry kind="1" path="${PROJECTS}\PaperToolkit\flash\src" linkType="1"/>
@@ -25,6 +25,7 @@
   </compiler>
   <applications>
     <application path="ButterflyNet2.mxml"/>
+    <application path="Launcher.mxml"/>
   </applications>
   <buildCSSFiles/>
 </actionScriptProperties>

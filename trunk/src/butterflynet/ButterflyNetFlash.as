@@ -34,13 +34,6 @@ package butterflynet {
 			
 		public function next():void {
 			
-			theParent.img1.visible = (Math.random() > 0.5);
-			theParent.img2.visible = (Math.random() > 0.5);
-			theParent.img3.visible = (Math.random() > 0.5);
-			theParent.img4.visible = (Math.random() > 0.5);
-			theParent.img5.visible = (Math.random() > 0.5);
-			theParent.img6.visible = (Math.random() > 0.5);
-			
 			trace("Sending Next");
 			sock.send("<Next/>\n");
 		}
