@@ -11,11 +11,14 @@
 					<mx:Label text="ButterflyNet.exe to your Desktop. Enjoy! =)" width="100%" textAlign="center"/>
 				</mx:VBox>
 			</mx:AddChild>
+			<mx:RemoveChild target="{showByComboBox}"/>
+			<mx:RemoveChild target="{navVbox}"/>
 		</mx:State>
 	</mx:states>
 	<mx:Style source="styles/styles.css"/>
 	<mx:Script>
 		<![CDATA[
+			import flash.filesystem.File;
 			import mx.core.UIComponent;
 			import flash.events.MouseEvent;
 			import butterflynet.ButterflyNetFlash;
@@ -27,11 +30,41 @@
 			private var slideTimer:Timer;
 
 			private function constructBNet():void {
+				currentState = "FirstTime";
+				
+				
 				container = new UIComponent();
 				addChild(container);
 				bnet = new ButterflyNetFlash();
 				container.addChild(bnet);
 				bnet.addParent(this);
+				
+				
+				/* In Flex Builder vs. Deployed:
+				Resource (Builder): C:\Documents and Settings\Ron Yeh\My Documents\Projects\ButterflyNet2\bin
+				Resource (Deployed): C:\Documents and Settings\Ron Yeh\Program Files\Stanford\ButterflyNet
+	
+				User: C:\Documents and Settings\Ron Yeh
+				Storage: C:\Documents and Settings\Ron Yeh\Application Data\butterflynet.ButterflyNet\Local Store
+				Documents: C:\Documents and Settings\Ron Yeh\My Documents
+				Desktop: C:\Documents and Settings\Ron Yeh\Desktop
+				Roots:
+					A:\
+					C:\
+					D:\
+					Z:\
+							
+				trace("User: " + File.userDirectory.nativePath);
+				trace("Resource: " + File.appResourceDirectory.nativePath);
+				trace("Storage: " + File.appStorageDirectory.nativePath);
+				trace("Documents: " + File.documentsDirectory.nativePath);
+				trace("Desktop: " + File.desktopDirectory.nativePath);
+				trace("Roots:");
+				for each (var f:File in File.listRootDirectories()) {
+					trace(f.nativePath);
+				}
+				*/
+				installDir.text = File.appResourceDirectory.nativePath;
 			}
 
 			private function clickHandler(event:MouseEvent):void {
@@ -105,7 +138,7 @@
 			<mx:Object label="Timeline" data="ShowTimeline"/>
 		</mx:ArrayCollection>
 	</mx:ComboBox>
-	<mx:VBox left="10" bottom="10">
+	<mx:VBox left="10" bottom="10" id="navVbox">
 		<mx:HBox>
 			<mx:Button label="&lt;" id="prevButton" fontWeight="bold" click="bnet.prev()"/>
 			<mx:Button label="&gt;" id="nextButton" fontWeight="bold" click="bnet.next()"/>
