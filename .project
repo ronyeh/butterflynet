@@ -24,16 +24,16 @@
 	</buildSpec>
 	<natures>
 		<nature>com.adobe.flexbuilder.apollo.apollonature</nature>
+		<nature>com.adobe.flexbuilder.project.actionscriptnature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>com.adobe.flexbuilder.project.flexnature</nature>
-		<nature>com.adobe.flexbuilder.project.actionscriptnature</nature>
 		<nature>org.asdt.core.ASNature</nature>
 	</natures>
 	<linkedResources>
 		<link>
 			<name>[source path] src</name>
 			<type>2</type>
-			<locationURI>DOCUMENTS/R3Flash/src</locationURI>
+			<location>PROJECTS/PaperToolkit/flash/src</location>
 		</link>
 	</linkedResources>
 </projectDescription>

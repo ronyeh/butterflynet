@@ -105,29 +105,4 @@
 			<mx:Button label="+" id="zoomInButton" click="zoomIn()"/>
 		</mx:HBox>
 	</mx:VBox>
-
-	<mx:Image id="img1" buttonMode="true" 
-		mouseDown="img1.startDrag();" mouseUp="img1.stopDrag();" x="675" y="206" visible="false">
-		<mx:source>../tempPhotos/Thumbs/img_1551.jpg</mx:source>
-	</mx:Image>
-	<mx:Image id="img2" buttonMode="true" 
-		mouseDown="img2.startDrag();" mouseUp="img2.stopDrag();" x="530" y="323" visible="false">
-		<mx:source>../tempPhotos/Thumbs/img_1552.jpg</mx:source>
-	</mx:Image>
-	<mx:Image id="img3" buttonMode="true" 
-		mouseDown="img3.startDrag();" mouseUp="img3.stopDrag();" x="539" y="489" visible="false">
-		<mx:source>../tempPhotos/Thumbs/img_1560.jpg</mx:source>
-	</mx:Image>
-	<mx:Image id="img4" buttonMode="true" 
-		mouseDown="img4.startDrag();" mouseUp="img4.stopDrag();" x="822" y="500" visible="false">
-		<mx:source>../tempPhotos/Thumbs/img_1566.jpg</mx:source>
-	</mx:Image>
-	<mx:Image id="img5" buttonMode="true" 
-		mouseDown="img5.startDrag();" mouseUp="img5.stopDrag();" x="666" y="421" visible="false">
-		<mx:source>../tempPhotos/Thumbs/img_1567.jpg</mx:source>
-	</mx:Image>
-	<mx:Image id="img6" buttonMode="true" 
-		mouseDown="img6.startDrag();" mouseUp="img6.stopDrag();" x="804" y="301" visible="false">
-		<mx:source>../tempPhotos/Thumbs/img_1559.jpg</mx:source>
-	</mx:Image>
 </mx:Application>

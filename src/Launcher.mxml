@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:ApolloApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" 
+	backgroundGradientColors="[#292929, #292929]" 
+	pageTitle="BNet Launcher" width="640" height="480" addedToStage="init();">
+	<mx:Style source="styles/styles.css"/>
+	<mx:Script>
+		<![CDATA[
+			import flash.filesystem.File;
+
+		public function init():void {
+			trace("Initting");			
+			
+			// check if files exist, and java version
+			
+			/* In Flex Builder vs. Deployed:
+			Resource (Builder): C:\Documents and Settings\Ron Yeh\My Documents\Projects\ButterflyNet2\bin
+			Resource (Deployed): C:\Documents and Settings\Ron Yeh\Program Files\Stanford\ButterflyNet
+
+			User: C:\Documents and Settings\Ron Yeh
+			Storage: C:\Documents and Settings\Ron Yeh\Application Data\butterflynet.ButterflyNet\Local Store
+			Documents: C:\Documents and Settings\Ron Yeh\My Documents
+			Desktop: C:\Documents and Settings\Ron Yeh\Desktop
+			Roots:
+				A:\
+				C:\
+				D:\
+				Z:\
+						
+			trace("User: " + File.userDirectory.nativePath);
+			trace("Resource: " + File.appResourceDirectory.nativePath);
+			trace("Storage: " + File.appStorageDirectory.nativePath);
+			trace("Documents: " + File.documentsDirectory.nativePath);
+			trace("Desktop: " + File.desktopDirectory.nativePath);
+			trace("Roots:");
+			for each (var f:File in File.listRootDirectories()) {
+				trace(f.nativePath);
+			}
+			*/
+			installDir.text = File.appResourceDirectory.nativePath;
+		}
+		
+		public function link():void {
+			navigateToURL(new URLRequest("C:"));			
+		}
+		]]>
+	</mx:Script>
+	<mx:Label text="Please navigate to" horizontalCenter="0" enabled="true" top="177"/>
+	<mx:Label text="and create a shortcut from" horizontalCenter="0" top="242"/>
+	<mx:Label text="ButterflyNet.exe to your Desktop. Enjoy! =)" horizontalCenter="0" top="273"/>
+	<mx:TextArea horizontalCenter="0" top="211" id="installDir"  editable="false" wordWrap="true" width="618" height="23" color="#ffffff" backgroundColor="#5c5c5c" textAlign="center"/>
+</mx:ApolloApplication>
