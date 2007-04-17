@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<application appId="butterflynet.Launcher" version="2" xmlns="http://ns.adobe.com/apollo/application/1.0.M3">
+<application appId="butterflynet.BNet" version="2" xmlns="http://ns.adobe.com/apollo/application/1.0.M3">
 
 
 
@@ -41,7 +41,7 @@
             Windows and Mac OS X folder naming restrictions.
             -->
 
-            <name>Launcher</name>
+            <name>BNet</name>
 
             <!--
             The description displayed in the Apollo application installer.
@@ -55,7 +55,7 @@
             path and must conform to Windows folder naming restrictions. 
             -->
 
-            <publisher>ButterflyNet</publisher>
+            <publisher>Stanford</publisher>
 
             <!--
             The application copyright information. (Optional)

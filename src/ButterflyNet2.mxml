@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" backgroundGradientColors="[#292929, #292929]" 
+<mx:ApolloApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" backgroundGradientColors="[#292929, #292929]" 
 	pageTitle="ButterflyNet2" creationComplete="constructBNet()">
+	<mx:states>
+		<mx:State name="FirstTime">
+			<mx:AddChild position="lastChild">
+				<mx:VBox horizontalCenter="0" verticalCenter="0" width="90%">
+					<mx:Label text="Please navigate to" enabled="true" textAlign="center" width="100%"/>
+					<mx:TextArea id="installDir"  editable="false" wordWrap="true" height="23" color="#ffffff" backgroundColor="#5c5c5c" textAlign="center" width="100%" borderStyle="none"/>
+					<mx:Label text="and create a shortcut from" width="100%" textAlign="center"/>
+					<mx:Label text="ButterflyNet.exe to your Desktop. Enjoy! =)" width="100%" textAlign="center"/>
+				</mx:VBox>
+			</mx:AddChild>
+		</mx:State>
+	</mx:states>
 	<mx:Style source="styles/styles.css"/>
 	<mx:Script>
 		<![CDATA[
@@ -105,4 +117,4 @@
 			<mx:Button label="+" id="zoomInButton" click="zoomIn()"/>
 		</mx:HBox>
 	</mx:VBox>
-</mx:Application>
+</mx:ApolloApplication>
