@@ -16,8 +16,14 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
+		<buildCommand>
+			<name>com.adobe.flexbuilder.apollo.apollobuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 	</buildSpec>
 	<natures>
+		<nature>com.adobe.flexbuilder.apollo.apollonature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>com.adobe.flexbuilder.project.flexnature</nature>
 		<nature>com.adobe.flexbuilder.project.actionscriptnature</nature>
@@ -27,7 +33,7 @@
 		<link>
 			<name>[source path] src</name>
 			<type>2</type>
-			<location>DOCUMENTS/R3Flash/src</location>
+			<locationURI>DOCUMENTS/R3Flash/src</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
