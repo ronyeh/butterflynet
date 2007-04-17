@@ -5,6 +5,8 @@
       <compilerSourcePathEntry kind="1" path="${PROJECTS}\PaperToolkit\flash\src" linkType="1"/>
     </compilerSourcePath>
     <libraryPath>
+      <libraryPathEntry kind="3" path="${APOLLO_SDK}/frameworks/libs/apollo/apolloglobal.swc" linkType="2"/>
+      <libraryPathEntry kind="3" path="${APOLLO_SDK}/frameworks/libs/apollo/apolloframework.swc" linkType="1"/>
       <libraryPathEntry kind="3" path="${FRAMEWORKS}/libs/playerglobal.swc" linkType="2"/>
       <libraryPathEntry kind="3" path="${FRAMEWORKS}/libs/utilities.swc" linkType="1"/>
       <libraryPathEntry kind="3" path="${FRAMEWORKS}/libs/flex.swc" linkType="1" sourcepath="${FRAMEWORKS}/source"/>
@@ -14,6 +16,8 @@
       <libraryPathEntry kind="1" path="${FRAMEWORKS}/locale/{locale}" linkType="1"/>
     </libraryPath>
     <sourceAttachmentPath>
+      <sourceAttachmentPathEntry kind="3" path="${APOLLO_SDK}/frameworks/libs/apollo/apolloglobal.swc" linkType="1"/>
+      <sourceAttachmentPathEntry kind="3" path="${APOLLO_SDK}/frameworks/libs/apollo/apolloframework.swc" linkType="1"/>
       <sourceAttachmentPathEntry kind="3" path="${FRAMEWORKS}/libs/flex.swc" linkType="1" sourcepath="${FRAMEWORKS}/source"/>
       <sourceAttachmentPathEntry kind="3" path="${FRAMEWORKS}/libs/framework.swc" linkType="1" sourcepath="${FRAMEWORKS}/source"/>
       <sourceAttachmentPathEntry kind="3" path="${FRAMEWORKS}/libs/charts.swc" linkType="1" sourcepath="${FRAMEWORKS}/source"/>
