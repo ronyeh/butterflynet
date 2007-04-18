@@ -1,22 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:ApolloApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" backgroundGradientColors="[#292929, #292929]" 
 	pageTitle="ButterflyNet2" addedToStage="constructBNet();">
-	<mx:states>
-		<mx:State name="FirstTime">
-			<mx:AddChild position="lastChild">
-				<mx:VBox horizontalCenter="0" verticalCenter="0" width="90%">
-					<mx:Label text="Please navigate to" enabled="true" textAlign="center" width="100%"/>
-					<mx:TextArea id="installDir"  editable="false" wordWrap="true" height="23" color="#ffffff" backgroundColor="#5c5c5c" textAlign="center" width="100%" borderStyle="none"/>
-					<mx:Label text="and create a shortcut from" width="100%" textAlign="center"/>
-					<mx:Label text="ButterflyNet.exe to your Desktop. Enjoy! =)" width="100%" textAlign="center"/>
-				</mx:VBox>
-			</mx:AddChild>
-			<mx:RemoveChild target="{showByComboBox}"/>
-			<mx:RemoveChild target="{navVbox}"/>
-			<mx:SetProperty name="width" value="800"/>
-			<mx:SetProperty name="height" value="480"/>
-		</mx:State>
-	</mx:states>
 	<mx:Style source="styles/styles.css"/>
 	<mx:Script>
 		<![CDATA[
@@ -35,27 +19,58 @@
 				bnet = new ButterflyNetBackend(this);
 				container.addChild(bnet);
 				addChild(container);
-				bnet.checkIfFirstTimeLoaded();				
+				//bnet.checkIfFirstTimeLoaded();				
 			}
 		]]>
 	</mx:Script>
-	<mx:ComboBox color="#000000" id="showByComboBox" right="10" width="160" top="10">
-		<mx:ArrayCollection id="showNotesAs">
-			<mx:Object label="Pages" data="ShowPages"/>
-			<mx:Object label="Clusters" data="ShowClusters"/>
-			<mx:Object label="Timeline" data="ShowTimeline"/>
-		</mx:ArrayCollection>
-	</mx:ComboBox>
+	<mx:states>
+		<mx:State name="FirstTime">
+			<mx:AddChild position="lastChild">
+				<mx:VBox horizontalCenter="0" verticalCenter="0" width="90%">
+					<mx:Label text="Please navigate to" enabled="true" textAlign="center" width="100%"/>
+					<mx:TextArea id="installDir"  editable="false" wordWrap="true" height="23" color="#ffffff" backgroundColor="#5c5c5c" textAlign="center" width="100%" borderStyle="none"/>
+					<mx:Label text="and create a shortcut from" width="100%" textAlign="center"/>
+					<mx:Label text="ButterflyNet.exe to your Desktop. Enjoy! =)" width="100%" textAlign="center"/>
+				</mx:VBox>
+			</mx:AddChild>
+			<mx:RemoveChild target="{showByComboBox}"/>
+			<mx:RemoveChild target="{navVbox}"/>
+			<mx:SetProperty name="width" value="800"/>
+			<mx:SetProperty name="height" value="480"/>
+		</mx:State>
+	</mx:states>
 	<mx:VBox left="10" bottom="10" id="navVbox">
-		<mx:HBox>
+		<mx:ComboBox color="#000000" id="showByComboBox" width="170" left="10" bottom="68">
+			<mx:ArrayCollection id="showNotesAs">
+				<mx:Object label="Pages" data="ShowPages"/>
+				<mx:Object label="Clusters" data="ShowClusters"/>
+				<mx:Object label="Timeline" data="ShowTimeline"/>
+			</mx:ArrayCollection>
+		</mx:ComboBox>
+		<mx:HBox width="100%">
 			<mx:Button label="&lt;" id="prevButton" fontWeight="bold" click="bnet.prev()"/>
 			<mx:Button label="&gt;" id="nextButton" fontWeight="bold" click="bnet.next()"/>
+			<mx:Button label="Auto" click="bnet.toggleFullScreen();" id="slideShowButton" width="100%"/>
 		</mx:HBox>
-		<mx:Button label="Slide Show" click="bnet.toggleFullScreen();" id="slideShowButton"/>
 		<mx:HBox>
 			<mx:Button label="-" id="zoomOutButton" click="bnet.zoomOut()"/>
 			<mx:Button label="100%" id="zoomDefaultButton" click="bnet.resetZoom()"/>
 			<mx:Button label="+" id="zoomInButton" click="bnet.zoomIn()"/>
 		</mx:HBox>
 	</mx:VBox>
+	<mx:TabNavigator height="180" right="10" left="188" bottom="10" fontSize="12" color="#4b4b4b" backgroundColor="#DDDDDD" cornerRadius="0" fillColors="[0xDDDDDD, 0xCCCCCC, 0xDDDDDD, 0xEEEEEE]">
+		<mx:Canvas label="All Related Items" width="100%" height="100%" backgroundColor="#333333">
+		</mx:Canvas>
+		<mx:Canvas label="Photos" width="100%" height="100%" backgroundColor="#333333">
+		</mx:Canvas>
+		<mx:Canvas label="Files" width="100%" height="100%" backgroundColor="#333333">
+			<mx:FileSystemDataGrid width="100%" height="100%"/>
+		</mx:Canvas>
+		<mx:Canvas label="Audio" width="100%" height="100%" backgroundColor="#333333">
+		</mx:Canvas>
+		<mx:Canvas label="Video" width="100%" height="100%" backgroundColor="#333333">
+		</mx:Canvas>
+		<mx:Canvas label="GPS Location" width="100%" height="100%" backgroundColor="#333333">
+		</mx:Canvas>
+	</mx:TabNavigator>
 </mx:ApolloApplication>
