@@ -18,6 +18,7 @@ package butterflynet {
 	import flash.system.Shell;
 	import flash.display.NativeWindow;
 	import flash.geom.Rectangle;
+	import flash.display.Graphics;
 
 	public class ButterflyNetBackend extends Sprite {
 
@@ -54,7 +55,18 @@ package butterflynet {
 			addChild(inkWell);
 			
 			currInkStroke = new InkStroke();
+
+			buttonMode = true;
+			addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
+			addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 		}
+		
+        private function onMouseDown(evt:Event):void {
+            this.startDrag();
+        }
+        private function onMouseUp(evt:Event):void {
+			this.stopDrag();
+        }
 		
 		// either hide or show the large related items bar
 		public function toggleRelatedItemsBar():void {
@@ -140,10 +152,7 @@ package butterflynet {
 		public function resetZoom():void {
 			scaleX = 1;
 			scaleY = 1;
-			recenter();
-		}
-		public function recenter():void {
-			inkWell.rescaleAndrecenter(theParent.inkCanvas);
+			rescaleAndrecenter();
 		}
 		//////////////////////////////////////////////////////////////////////////////
 		private function isFullScreen():Boolean {
@@ -183,19 +192,58 @@ package butterflynet {
 		// processes data sent over from the java code
         private function msgListener(event:DataEvent):void {
         	var msgXML:XML = new XML(event.text);
-			if (event.text.indexOf("<ink>") == 0) {
+			if (event.text.indexOf("<ink") == 0) {
+	        	// trace(msgXML.toXMLString());
 	        	var parser:InkRawXMLParser = new InkRawXMLParser(msgXML);
 	        	if (inkWell != null) {
 	        		removeChild(inkWell);
 	        	}
 	        	inkWell = parser.ink;
-	        	inkWell.addPageDecorations();
 	        	addChildAt(inkWell, 0);
-	        	inkWell.rescaleAndrecenter(theParent.inkCanvas);
+	        	rescaleAndrecenter();
+	        	addPageDecorations();
 			} else {
 	        	trace(msgXML.toXMLString());
 			}
         }
+
+		public function rescaleAndrecenter():void {
+			// var rect:Rectangle = inkWell.getRect(theStage); // Bad
+        	inkWell.x = -inkWell.minX + inkWell.paddingX;
+        	inkWell.y = -inkWell.minY + inkWell.paddingY + inkWell.paddingY/3; // even more space
+        	
+        	// HACK: I can't figure this out
+        	// There is either a bug with the minX and maxX,
+        	// or some major misunderstanding by me of how this works (esp with scaling)
+        	// OMG: I got it to work!
+        	var w:Number = inkWell.maxX - inkWell.minX + (inkWell.paddingX * 2);
+        	inkWell.x += (theStage.width - w)/2;
+		}
+
+
+		public function addPageDecorations():void {
+			var decorations:Sprite = new Sprite();
+			
+			x = 0;
+			y = 0;
+
+			var g:Graphics = decorations.graphics;
+			g.clear();
+			g.beginFill(0x202020);
+			g.lineStyle(0.5, 0x444444);
+			
+			var xMin:Number = inkWell.minX;
+			var xMax:Number = inkWell.maxX;
+			var yMin:Number = inkWell.minY;
+			var yMax:Number = inkWell.maxY;
+			var padding:Number = inkWell.paddingX;
+			
+			g.drawRect(xMin-padding, yMin-padding, (xMax-xMin)+(2*padding), (yMax-yMin)+(2*padding));
+			g.endFill();
+			
+			inkWell.addChildAt(decorations, 0);
+		}
+
 
 		// manipulate how the strokes look on screen
 		public function thinnerStrokes():void {

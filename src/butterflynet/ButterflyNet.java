@@ -1,6 +1,5 @@
 package butterflynet;
 
-import java.awt.Desktop;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,6 +9,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Properties;
 
+import butterflynet.content.DocumentsDatabase;
 import butterflynet.content.NotesDatabase;
 import butterflynet.content.PhotosAndVideosDatabase;
 import butterflynet.navigation.FlashServer;
@@ -64,6 +64,10 @@ public class ButterflyNet {
 
 	private File clustersPath;
 
+	private File databasePath;
+
+	private DocumentsDatabase docsDatabase;
+
 	private File docsPath;
 
 	private FlashServer flash;
@@ -84,9 +88,7 @@ public class ButterflyNet {
 	private NotesDatabase notesDatabase;
 
 	private File notesPath;
-
 	private File pagesPath;
-
 	private PhotosAndVideosDatabase photosDatabase;
 	private File photosPath;
 	private File settingsPath;
@@ -109,8 +111,8 @@ public class ButterflyNet {
 
 		// start checking for data...
 		// check for notes, photos, and documents
-		// new DocumentsDatabase(docsPath, settingsPath);
-		photosDatabase = new PhotosAndVideosDatabase(this);
+		// docsDatabase = new DocumentsDatabase(docsPath, settingsPath);
+		photosDatabase = new PhotosAndVideosDatabase(this, photosPath);
 		notesDatabase = new NotesDatabase(this, notesPath, settingsPath, mostRecentlySynchedTimestamp,
 				autoUpdateSynchedFileTimestamp);
 
@@ -118,8 +120,13 @@ public class ButterflyNet {
 		flash = new FlashServer(notesDatabase);
 
 		// finally, load the GUI and show the notes, photos, etc...
-		apolloApp = new File("bin/BNet.exe"); // testing
-		// apolloApp = new File("BNet.exe"); // deployment
+		if (new File("BNet.exe").exists()) {
+			apolloApp = new File("BNet.exe"); // deployment
+			DebugUtils.println("Deployment");
+		} else {
+			apolloApp = new File("bin/BNet.exe"); // testing
+			DebugUtils.println("Testing");
+		}
 		flash.showFlashGUI(apolloApp);
 	}
 
@@ -152,6 +159,8 @@ public class ButterflyNet {
 		settingsPath = new File(dataPath, "SoftwareSettings");
 		// DebugUtils.println("Settings path is hidden? " + settingsPath.isHidden());
 
+		databasePath = new File(settingsPath, "Database");
+
 		thumbsPath = new File(settingsPath, "Thumbnails");
 		thumbs100Path = new File(thumbsPath, "100");
 		thumbs128Path = new File(thumbsPath, "128");
@@ -159,7 +168,7 @@ public class ButterflyNet {
 
 		// make a list of directories to check
 		final File[] makeTheseDirs = new File[] { notesPath, pagesPath, clustersPath, photosPath, docsPath,
-				settingsPath, thumbsPath, thumbs100Path, thumbs128Path, thumbs256Path };
+				settingsPath, thumbsPath, thumbs100Path, thumbs128Path, thumbs256Path, databasePath };
 		for (File dir : makeTheseDirs) {
 			if (!dir.exists()) {
 				DebugUtils.println(dir.getName() + " path does not exist. Making the directory.");
@@ -170,6 +179,10 @@ public class ButterflyNet {
 
 	public File getClustersPath() {
 		return clustersPath;
+	}
+
+	public File getDatabasePath() {
+		return databasePath;
 	}
 
 	public File getPagesPath() {

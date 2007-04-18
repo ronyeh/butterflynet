@@ -1,6 +1,7 @@
 package butterflynet.content;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.media.jai.PlanarImage;
@@ -27,24 +28,46 @@ import edu.stanford.hci.r3.util.graphics.JAIUtils;
  */
 public class PhotosAndVideosDatabase {
 
-	private ButterflyNet butterflyNet;
+	private ButterflyNet bnet;
+	private File db;
+	private File photosPath;
 
-	public PhotosAndVideosDatabase(ButterflyNet bNet) {
-		butterflyNet = bNet;
+	public PhotosAndVideosDatabase(ButterflyNet butterflyNet, File thePhotosPath) {
+		bnet = butterflyNet;
+		photosPath = thePhotosPath;
+
+		DebugUtils.println("Processing Photos and Videos");
 
 		// find all files in docsPath
-		List<File> files = FileUtils.listVisibleFilesRecursively(butterflyNet.getPhotosPath());
+		List<File> files = FileUtils.listVisibleFilesRecursively(bnet.getPhotosPath());
 		// DebugUtils.println(files);
 
 		// find the most recent file in docsPath
-		FileUtils.sortPhotosByCaptureDate(files, SortDirection.NEW_TO_OLD);
+		HashMap<File, Long> timestamps = FileUtils.sortPhotosByCaptureDate(files, SortDirection.OLD_TO_NEW);
 
-		if (files.size() > 0) {
+		if (files.size() == 0) {
+			return;
+		} else {
 			// check the settings to see what was the last file we had processed...
-			File newestPhoto = files.get(0);
+			File newestPhoto = files.get(files.size() - 1);
 			DebugUtils.println("Newest photo is: " + newestPhoto);
 
-			createThumbnails(files);
+			File oldestPhoto = files.get(0);
+			DebugUtils.println("Oldes photo is: " + oldestPhoto);
+
+			// DebugUtils.println("Creating Thumbnails for Photos");
+			// createThumbnails(files);
+
+			DebugUtils.println("Saving Timestamps");
+			db = new File(bnet.getDatabasePath(), "PhotosAndVideos.txt");
+			;
+			StringBuilder sb = new StringBuilder();
+			sb.append("<photosAndVideos>\n");
+			for (File f : files) {
+				sb.append("<photo path=\"" + FileUtils.getRelativePath(photosPath, f) + "\" time=\"" + timestamps.get(f) + "\"/>\n");
+			}
+			sb.append("</photosAndVideos>");
+			FileUtils.writeStringToFile(sb.toString(), db);
 		}
 	}
 
@@ -57,12 +80,15 @@ public class PhotosAndVideosDatabase {
 	private void createThumbnails(List<File> files) {
 
 		// a thumbnail should be stored in Thumbnails/100, 128, 256
-		File thumbnails100Path = butterflyNet.getThumbnails100Path();
-		File thumbnails128Path = butterflyNet.getThumbnails128Path();
-		File thumbnails256Path = butterflyNet.getThumbnails256Path();
+		File thumbnails100Path = bnet.getThumbnails100Path();
+		File thumbnails128Path = bnet.getThumbnails128Path();
+		File thumbnails256Path = bnet.getThumbnails256Path();
 
-		int[] sizes = new int[] { 256, 128, 100 };
-		File[] paths = new File[] { thumbnails256Path, thumbnails128Path, thumbnails100Path };
+		// int[] sizes = new int[] { 256, 128, 100 };
+		// File[] paths = new File[] { thumbnails256Path, thumbnails128Path, thumbnails100Path };
+
+		int[] sizes = new int[] { 128 };
+		File[] paths = new File[] { thumbnails128Path };
 
 		for (File f : files) {
 			// create a "unique" thumbnail name
