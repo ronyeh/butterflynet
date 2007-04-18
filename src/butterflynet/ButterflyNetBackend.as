@@ -17,10 +17,13 @@ package butterflynet {
 	import java.JavaIntegration;
 	import flash.system.Shell;
 	import flash.display.NativeWindow;
+	import flash.geom.Rectangle;
 
 	public class ButterflyNetBackend extends Sprite {
 
+		// the component that displays ink on the stage...
 		private var inkWell:Ink;
+		
 		private var debugText:TextArea;
 		private var currInkStroke:InkStroke;
 
@@ -51,6 +54,15 @@ package butterflynet {
 			addChild(inkWell);
 			
 			currInkStroke = new InkStroke();
+		}
+		
+		// either hide or show the large related items bar
+		public function toggleRelatedItemsBar():void {
+			if (theParent.currentState == "RelatedItemsHidden") {
+				theParent.currentState = "";
+			} else {
+				theParent.currentState = "RelatedItemsHidden";
+			}
 		}
 
 		private function closing(e:Event):void {
@@ -131,7 +143,8 @@ package butterflynet {
 			recenter();
 		}
 		public function recenter():void {
-			trace(inkWell.getBounds(this));
+			var rect:Rectangle = inkWell.getBounds(this);
+			inkWell.recenter(theStage);
 		}
 		//////////////////////////////////////////////////////////////////////////////
 		private function isFullScreen():Boolean {
@@ -168,17 +181,21 @@ package butterflynet {
 			trace("Sending Prev");
 			javaBackend.send("prev");
 		}
+		// processes data sent over from the java code
         private function msgListener(event:DataEvent):void {
-        	var pagesXML:XML = new XML(event.text);
-        	// too much data to trace all the time =)
-        	// trace(pagesXML.toXMLString());
-        	
-        	var parser:InkRawXMLParser = new InkRawXMLParser(pagesXML);
-        	if (inkWell != null) {
-        		removeChild(inkWell);
-        	}
-        	inkWell = parser.ink;
-        	addChild(inkWell);
+        	var msgXML:XML = new XML(event.text);
+			if (event.text.indexOf("<ink>") == 0) {
+	        	var parser:InkRawXMLParser = new InkRawXMLParser(msgXML);
+	        	if (inkWell != null) {
+	        		removeChild(inkWell);
+	        	}
+	        	inkWell = parser.ink;
+	        	inkWell.addPageDecorations();
+	        	inkWell.recenter(theStage);
+	        	addChildAt(inkWell, 0);
+			} else {
+	        	trace(msgXML.toXMLString());
+			}
         }
 
 		// manipulate how the strokes look on screen
