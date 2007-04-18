@@ -19,6 +19,7 @@ package butterflynet {
 	import flash.display.NativeWindow;
 	import flash.geom.Rectangle;
 	import flash.display.Graphics;
+	import mx.controls.Image;
 
 	public class ButterflyNetBackend extends Sprite {
 
@@ -38,12 +39,20 @@ package butterflynet {
 		// the port that Java is listening on
 		private var portNum:int;
 			
+		private var imageControls:Array = new Array();
+
+
 		public function ButterflyNetBackend(bnet:ButterflyNet2):void {
 			trace("BNet Flash Backend Constructor");
 
 			addListenerForCommandLineArguments();
 			
 			theParent = bnet;
+			imageControls.push(theParent.img1);
+			imageControls.push(theParent.img2);
+			imageControls.push(theParent.img3);
+			imageControls.push(theParent.img4);
+			
 			theStage = theParent.stage;
 			theWindow = theParent.window;
 			theWindow.width = 1024;
@@ -191,6 +200,10 @@ package butterflynet {
 		}
 		// processes data sent over from the java code
         private function msgListener(event:DataEvent):void {
+        	
+        	var relatedFiles:Array = new Array();
+        	theParent.relatedFiles.dataProvider = relatedFiles;
+        	
         	var msgXML:XML = new XML(event.text);
 			if (event.text.indexOf("<ink") == 0) {
 	        	// trace(msgXML.toXMLString());
@@ -202,10 +215,49 @@ package butterflynet {
 	        	addChildAt(inkWell, 0);
 	        	rescaleAndrecenter();
 	        	addPageDecorations();
-			} else {
+			} else if (event.text.indexOf("<photosAndVideos")==0) {
+				
+				var rootPath:String = msgXML.@rootPath;
+				trace("Photos And Videos: " + msgXML.@count + ", " + msgXML.@rootPath);
+				// get all the photos (somewhere down the XML tree)
+				var photos:XMLList = msgXML.descendants("photo");
+				
+				var maxToLoad:Number = imageControls.length;
+				var indexToLoad:Number = (Math.random() * photos.length()) - maxToLoad;
+				var i:Number = 0;
+				var photosToLoad:Array = new Array();
+				trace("Max to load: " + maxToLoad);
+				for each (var photo:XML in photos) {
+					i++;
+					// trace(photo);
+					var path:String = photo.@path;
+					
+					var photoFile:File = new File(rootPath + "\\" + path);
+					relatedFiles.push(photoFile);
+
+					if (photoFile.exists && i > indexToLoad && photosToLoad.length < maxToLoad) {
+						trace("Should Load ["+path+"]");
+						// load a random photo
+						photosToLoad.push(photoFile);
+					}
+				}	
+				loadPhotos(photosToLoad);
+			} 
+			else {
 	        	trace(msgXML.toXMLString());
 			}
         }
+
+		public function loadPhotos(photosToLoad:Array):void {
+			
+			var index:Number = 0;
+			for each (var photo:File in photosToLoad) {
+				trace("Loading Photo: " + photo + " " + index + " " + imageControls[index]);
+				var imgControl:Image = imageControls[index];
+				imgControl.load(photo.url);
+				index++;
+			}
+		}
 
 		public function rescaleAndrecenter():void {
 			// var rect:Rectangle = inkWell.getRect(theStage); // Bad

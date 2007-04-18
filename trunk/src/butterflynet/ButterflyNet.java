@@ -117,7 +117,7 @@ public class ButterflyNet {
 				autoUpdateSynchedFileTimestamp);
 
 		// load the local page navigation server
-		flash = new FlashServer(notesDatabase);
+		flash = new FlashServer(notesDatabase, photosDatabase);
 
 		// finally, load the GUI and show the notes, photos, etc...
 		if (new File("BNet.exe").exists()) {

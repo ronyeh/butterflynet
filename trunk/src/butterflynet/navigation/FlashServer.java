@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import butterflynet.content.NotesDatabase;
+import butterflynet.content.PhotosAndVideosDatabase;
 import edu.stanford.hci.r3.flash.FlashCommand;
 import edu.stanford.hci.r3.flash.FlashCommunicationServer;
 import edu.stanford.hci.r3.pen.ink.Ink;
@@ -35,12 +36,15 @@ public class FlashServer {
 
 	private NotesDatabase notesDB;
 
+	private PhotosAndVideosDatabase photosDB;
+
 	/**
-	 * @param port
 	 * @param notesDatabase
+	 * @param photosDatabase
 	 */
-	public FlashServer(int port, NotesDatabase notesDatabase) {
+	public FlashServer(NotesDatabase notesDatabase, PhotosAndVideosDatabase photosDatabase) {
 		notesDB = notesDatabase;
+		photosDB = photosDatabase;
 		flash = new FlashCommunicationServer(DEFAULT_PORT);
 
 		flash.addCommand("next", new FlashCommand() {
@@ -64,22 +68,21 @@ public class FlashServer {
 	}
 
 	/**
-	 * @param notesDatabase
-	 * 
-	 */
-	public FlashServer(NotesDatabase notesDatabase) {
-		this(DEFAULT_PORT, notesDatabase);
-	}
-
-	/**
 	 * @param prevPageDir
 	 */
 	private void composeAndSendInk(File prevPageDir) {
 		// figure out which files are there... and send them in XML back to the Flash GUI...
 		List<File> pageFiles = FileUtils.listVisibleFiles(prevPageDir);
 		DebugUtils.println("Sending these page files back: " + pageFiles);
-		flash.sendMessage(makeInkXMLMessageOfPageFiles(pageFiles));
+		Ink allInk = new Ink();
+		flash.sendMessage(makeInkXMLMessageOfPageFiles(pageFiles, allInk));
 		
+		List<File> listOfPhotosMatching = photosDB.getListOfPhotosMatching(allInk.getFirstTimestamp(), allInk.getLastTimestamp());
+		flash.sendMessage(makePhotosXMLMessageOfPhotoFiles(listOfPhotosMatching));
+	}
+
+	private String makePhotosXMLMessageOfPhotoFiles(List<File> listOfPhotosMatching) {
+		return photosDB.makePhotosXML(listOfPhotosMatching);
 	}
 
 	private void handleCurrent() {
@@ -101,12 +104,12 @@ public class FlashServer {
 	 * Turn the files into ink that I will send to the flash client! Crazyyy....
 	 * 
 	 * @param pageFiles
+	 * @param allInk
 	 * @return
 	 */
-	private String makeInkXMLMessageOfPageFiles(List<File> pageFiles) {
+	private String makeInkXMLMessageOfPageFiles(List<File> pageFiles, Ink allInk) {
 		long minTS = Long.MAX_VALUE;
 		long maxTS = Long.MIN_VALUE;
-		Ink allInk = new Ink();
 		for (File f : pageFiles) {
 			Ink pageInk = new Ink(f);
 			minTS = Math.min(pageInk.getFirstTimestamp(), minTS);

@@ -1,6 +1,8 @@
 package butterflynet.content;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,6 +33,7 @@ public class PhotosAndVideosDatabase {
 	private ButterflyNet bnet;
 	private File db;
 	private File photosPath;
+	private HashMap<File, Long> timestamps;
 
 	public PhotosAndVideosDatabase(ButterflyNet butterflyNet, File thePhotosPath) {
 		bnet = butterflyNet;
@@ -43,7 +46,7 @@ public class PhotosAndVideosDatabase {
 		// DebugUtils.println(files);
 
 		// find the most recent file in docsPath
-		HashMap<File, Long> timestamps = FileUtils.sortPhotosByCaptureDate(files, SortDirection.OLD_TO_NEW);
+		timestamps = FileUtils.sortPhotosByCaptureDate(files, SortDirection.OLD_TO_NEW);
 
 		if (files.size() == 0) {
 			return;
@@ -60,15 +63,29 @@ public class PhotosAndVideosDatabase {
 
 			DebugUtils.println("Saving Timestamps");
 			db = new File(bnet.getDatabasePath(), "PhotosAndVideos.txt");
-			;
-			StringBuilder sb = new StringBuilder();
-			sb.append("<photosAndVideos>\n");
-			for (File f : files) {
-				sb.append("<photo path=\"" + FileUtils.getRelativePath(photosPath, f) + "\" time=\"" + timestamps.get(f) + "\"/>\n");
-			}
-			sb.append("</photosAndVideos>");
-			FileUtils.writeStringToFile(sb.toString(), db);
+			FileUtils.writeStringToFile(makePhotosXML(files), db);
 		}
+	}
+
+	/**
+	 * @param files
+	 * @return
+	 */
+	public String makePhotosXML(List<File> files) {
+		StringBuilder sb = new StringBuilder();
+		try {
+			sb.append("<photosAndVideos count=\""
+					+ files.size() + "\" rootPath=\"" + photosPath.getCanonicalPath() + "\">\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		for (File f : files) {
+			sb.append("<photo path=\"" + FileUtils.getRelativePath(photosPath, f) + "\" time=\""
+					+ timestamps.get(f) + "\"/>\n");
+		}
+		sb.append("</photosAndVideos>");
+		String xmlString = sb.toString();
+		return xmlString;
 	}
 
 	/**
@@ -116,5 +133,16 @@ public class PhotosAndVideosDatabase {
 			}
 
 		}
+	}
+
+	public List<File> getListOfPhotosMatching(long firstTimestamp, long lastTimestamp) {
+		List<File> matching = new ArrayList<File>();
+		for (File f : timestamps.keySet()) {
+			long ts = timestamps.get(f);
+			if (ts > firstTimestamp && ts < lastTimestamp) {
+				matching.add(f);
+			}
+		}
+		return matching;
 	}
 }

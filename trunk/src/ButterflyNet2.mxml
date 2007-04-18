@@ -50,8 +50,13 @@
 		</mx:State>
 	</mx:states>
 
-	<mx:Canvas borderColor="#ffffff" id="inkCanvas" left="0" right="0" top="0" bottom="198">
+	<mx:Canvas borderColor="#ffffff" id="inkCanvas" left="0" right="0" top="-4" bottom="202">
 	</mx:Canvas>
+
+	<mx:Image right="10" top="10" id="img1" width="200" height="150"/>
+	<mx:Image left="10" top="174" width="200" height="150" id="img2"/>
+	<mx:Image right="10" top="170" id="img3" width="200" height="150"/>
+	<mx:Image left="10" top="10" width="200" height="150" id="img4"/>
 
 	<mx:VBox left="10" bottom="10" id="navVbox">
 		<mx:ComboBox color="#000000" id="showByComboBox" width="170" left="10" bottom="68">
@@ -74,13 +79,13 @@
 	</mx:VBox>
 	<mx:TabNavigator height="180" right="10" left="188" bottom="10" fontSize="12" color="#4b4b4b" backgroundColor="#DDDDDD" 
 		cornerRadius="0" fillColors="[0xDDDDDD, 0xCCCCCC, 0xDDDDDD, 0xEEEEEE]" id="relatedItemsBar"
-		hideEffect="{fadeOut}" showEffect="{fadeIn}" removedEffect="{fadeOut}" addedEffect="{fadeIn}">
+		hideEffect="{fadeOut}" showEffect="{fadeIn}" removedEffect="{fadeOut}" addedEffect="{fadeIn}" selectedIndex="2">
 		<mx:Canvas label="All Related Items" width="100%" height="100%" backgroundColor="#333333">
 		</mx:Canvas>
 		<mx:Canvas label="Photos" width="100%" height="100%" backgroundColor="#333333">
 		</mx:Canvas>
 		<mx:Canvas label="Files" width="100%" height="100%" backgroundColor="#333333">
-			<mx:FileSystemDataGrid width="100%" height="100%"/>
+			<mx:FileSystemDataGrid showIcons="true" directory="{File.documentsDirectory}" width="100%" height="100%" id="relatedFiles"/>
 		</mx:Canvas>
 		<mx:Canvas label="Audio" width="100%" height="100%" backgroundColor="#333333">
 		</mx:Canvas>
