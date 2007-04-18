@@ -16,16 +16,19 @@ package butterflynet {
 	import flash.display.StageDisplayState;
 	import java.JavaIntegration;
 	import flash.system.Shell;
+	import flash.display.NativeWindow;
 
 	public class ButterflyNetBackend extends Sprite {
 
 		private var inkWell:Ink;
-		private var sock:XMLSocket;
 		private var debugText:TextArea;
 		private var currInkStroke:InkStroke;
+
 		private var theParent:ButterflyNet2;	
-		private var slideTimer:Timer;
 		private var theStage:Stage;
+		private var theWindow:NativeWindow;
+		
+		private var slideTimer:Timer;
 		private var javaBackend:JavaIntegration;
 
 		// the port that Java is listening on
@@ -38,11 +41,21 @@ package butterflynet {
 			
 			theParent = bnet;
 			theStage = theParent.stage;
+			theWindow = theParent.window;
+			theWindow.width = 1024;
+			theWindow.height = 768;
+			theWindow.title = "ButterflyNet 2";			
+			theWindow.addEventListener(Event.CLOSE, closing);
 			
 			inkWell = new Ink();
 			addChild(inkWell);
 			
 			currInkStroke = new InkStroke();
+		}
+
+		private function closing(e:Event):void {
+			trace("Closing...");
+			javaBackend.send("exitApplication");
 		}
 
 		public function checkIfFirstTimeLoaded():void {
@@ -58,6 +71,7 @@ package butterflynet {
 		private function start():void {
 			javaBackend = new JavaIntegration(portNum);	
 			javaBackend.addMessageListener(msgListener);
+			javaBackend.send("connected");
 		}
 
 		// Exits the Application...		
@@ -89,7 +103,7 @@ package butterflynet {
 		    start();
 		}
 			
-
+		// TODO: Make the SlideShow Work!
 		private function timerHandler(event:TimerEvent):void {
 			next();
 		}
@@ -100,22 +114,26 @@ package butterflynet {
 			theParent.zoomOutButton.visible = vis;
 			theParent.zoomDefaultButton.visible = vis;
 		}
-		
+		//////////////////////////////////////////////////////////////////////////////
 		public function zoomIn():void {
 			scaleX *= 1.25;
 			scaleY *= 1.25;
 		}
-		public function resetZoom():void {
-			scaleX = 1;
-			scaleY = 1;
-			recenter();
-		}
+
 		public function zoomOut():void {
 			scaleX *= .8;
 			scaleY *= .8;
 		}
 
-
+		public function resetZoom():void {
+			scaleX = 1;
+			scaleY = 1;
+			recenter();
+		}
+		public function recenter():void {
+			trace(inkWell.getBounds(this));
+		}
+		//////////////////////////////////////////////////////////////////////////////
 		private function isFullScreen():Boolean {
 			return theStage.displayState == StageDisplayState.FULL_SCREEN;
 		}
@@ -143,22 +161,14 @@ package butterflynet {
 
 		public function next():void {
 			trace("Sending Next");
-			sock.send("<Next/>\n");
+			javaBackend.send("next");
 		}
 		
 		public function prev():void {
 			trace("Sending Prev");
-			sock.send("<Prev/>\n");
+			javaBackend.send("prev");
 		}
-			
-		public function recenter():void {
-			inkWell.recenter();
-		}
-
         private function msgListener(event:DataEvent):void {
-	        var message:XML = new XML(event.text);
-	        trace(message.toXMLString());
-	        
         	var pagesXML:XML = new XML(event.text);
         	// too much data to trace all the time =)
         	// trace(pagesXML.toXMLString());
@@ -169,21 +179,14 @@ package butterflynet {
         	}
         	inkWell = parser.ink;
         	addChild(inkWell);
-	        
-	        
-	        
-	        
         }
 
 		// manipulate how the strokes look on screen
 		public function thinnerStrokes():void {
-			
 		}
 
 		public function widerStrokes():void {
-
 		}
-
 	}
 
 	/* 
