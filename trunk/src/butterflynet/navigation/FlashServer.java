@@ -1,15 +1,11 @@
 package butterflynet.navigation;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.List;
 
 import butterflynet.content.NotesDatabase;
+import edu.stanford.hci.r3.flash.FlashCommand;
+import edu.stanford.hci.r3.flash.FlashCommunicationServer;
 import edu.stanford.hci.r3.pen.ink.Ink;
 import edu.stanford.hci.r3.util.DebugUtils;
 import edu.stanford.hci.r3.util.files.FileUtils;
@@ -28,106 +24,51 @@ import edu.stanford.hci.r3.util.files.FileUtils;
  * 
  * @author <a href="http://graphics.stanford.edu/~ronyeh">Ron B Yeh</a> (ronyeh(AT)cs.stanford.edu)
  */
-public class PageNavigationServer {
+public class FlashServer {
 
 	/**
 	 * communicate through this port
 	 */
 	public static final int DEFAULT_PORT = 7545;
 
-	private boolean clientConnected;
-
-	/**
-	 * 
-	 */
-	private Socket incoming;
+	private FlashCommunicationServer flash;
 
 	private NotesDatabase notesDB;
-
-	/**
-	 * 
-	 */
-	private BufferedReader readerIn;
-
-	/**
-	 * 
-	 */
-	private int serverPort;
-
-	/**
-	 * 
-	 */
-	private ServerSocket socket;
-
-	/**
-	 * 
-	 */
-	private PrintStream writerOut;
 
 	/**
 	 * @param port
 	 * @param notesDatabase
 	 */
-	public PageNavigationServer(int port, NotesDatabase notesDatabase) {
+	public FlashServer(int port, NotesDatabase notesDatabase) {
 		notesDB = notesDatabase;
-		serverPort = port;
-		new Thread(getServer()).start();
+		flash = new FlashCommunicationServer(DEFAULT_PORT);
+
+		flash.addCommand("next", new FlashCommand() {
+			@Override
+			public void invoke(String... args) {
+				handleNext();
+			}
+		});
+		flash.addCommand("prev", new FlashCommand() {
+			@Override
+			public void invoke(String... args) {
+				handlePrev();
+			}
+		});
+		flash.addCommand("connected", new FlashCommand() {
+			@Override
+			public void invoke(String... args) {
+				handleCurrent();
+			}
+		});
 	}
 
 	/**
 	 * @param notesDatabase
 	 * 
 	 */
-	public PageNavigationServer(NotesDatabase notesDatabase) {
+	public FlashServer(NotesDatabase notesDatabase) {
 		this(DEFAULT_PORT, notesDatabase);
-	}
-
-	/**
-	 * @return
-	 */
-	private Runnable getServer() {
-		return new Runnable() {
-
-			public void run() {
-				System.out.println(">> Starting PageNavServer at port: " + serverPort);
-				try {
-					socket = new ServerSocket(serverPort);
-					System.out.println(">> Waiting for a Client...");
-					incoming = socket.accept();
-					readerIn = new BufferedReader(new InputStreamReader(incoming.getInputStream()));
-					writerOut = new PrintStream(incoming.getOutputStream());
-					System.out.println(">> Flash Client connected.");
-					clientConnected = true;
-					// sendMessage("Say EXIT to exit.\r");
-					boolean done = false;
-					while (!done) {
-						String command = readerIn.readLine();
-						if (command == null) {
-							done = true;
-							incoming.close();
-						} else {
-							command = command.trim().toLowerCase();
-							System.out.println(">> Reading a line from the client: [" + command + "]");
-							if (command.equals("exit")) {
-								done = true;
-								incoming.close();
-							} else if (command.contains("next")) {
-								handleNext();
-							} else if (command.contains("prev")) {
-								handlePrev();
-							} else if (command.contains("connected")) {
-								handleCurrent();
-							} else {
-								DebugUtils.println("Unhandled command: " + command);
-							}
-						}
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				System.out.println(">> Closing PageNavServer");
-			}
-		};
 	}
 
 	private void handleCurrent() {
@@ -135,7 +76,7 @@ public class PageNavigationServer {
 		// figure out which files are there... and send them in XML back to the Flash GUI...
 		List<File> pageFiles = FileUtils.listVisibleFiles(nextPageDir);
 		DebugUtils.println("Sending these page files back: " + pageFiles);
-		sendMessage(makeInkXMLMessageOfPageFiles(pageFiles));
+		flash.sendMessage(makeInkXMLMessageOfPageFiles(pageFiles));
 	}
 
 	private void handleNext() {
@@ -143,7 +84,7 @@ public class PageNavigationServer {
 		// figure out which files are there... and send them in XML back to the Flash GUI...
 		List<File> pageFiles = FileUtils.listVisibleFiles(nextPageDir);
 		DebugUtils.println("Sending these page files back: " + pageFiles);
-		sendMessage(makeInkXMLMessageOfPageFiles(pageFiles));
+		flash.sendMessage(makeInkXMLMessageOfPageFiles(pageFiles));
 	}
 
 	private void handlePrev() {
@@ -151,7 +92,7 @@ public class PageNavigationServer {
 		// figure out which files are there... and send them in XML back to the Flash GUI...
 		List<File> pageFiles = FileUtils.listVisibleFiles(prevPageDir);
 		DebugUtils.println("Sending these page files back: " + pageFiles);
-		sendMessage(makeInkXMLMessageOfPageFiles(pageFiles));
+		flash.sendMessage(makeInkXMLMessageOfPageFiles(pageFiles));
 	}
 
 	/**
@@ -171,6 +112,8 @@ public class PageNavigationServer {
 	}
 
 	/**
+	 * Sends a list of files over to flash... What will we use this for?
+	 * 
 	 * @param pageFiles
 	 * @return
 	 */
@@ -186,21 +129,8 @@ public class PageNavigationServer {
 		return xml.toString();
 	}
 
-	/**
-	 * Prints to both the console and to the client.
-	 * 
-	 * @param message
-	 *            the string to print.
-	 */
-	public void sendMessage(String message) {
-		if (writerOut != null) {
-			writerOut.print(message + "\0");
-			writerOut.flush();
-		} else {
-			System.out.println("There is no client to send the message to.");
-		}
-		System.out.println("Sent " + message.length() + " bytes.");
-		System.out.flush();
+	public void showFlashGUI(File apolloGuiFile) {
+		flash.openFlashApolloGUI(apolloGuiFile);
 	}
 
 }

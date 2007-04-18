@@ -12,7 +12,7 @@ import java.util.Properties;
 
 import butterflynet.content.NotesDatabase;
 import butterflynet.content.PhotosAndVideosDatabase;
-import butterflynet.navigation.PageNavigationServer;
+import butterflynet.navigation.FlashServer;
 import edu.stanford.hci.r3.util.DebugUtils;
 import edu.stanford.hci.r3.util.graphics.SplashScreenUtils;
 
@@ -53,6 +53,8 @@ public class ButterflyNet {
 		new ButterflyNet();
 	}
 
+	private File apolloApp;
+
 	/**
 	 * Automatically advance the marker for figuring out which files we have synched.
 	 */
@@ -63,6 +65,8 @@ public class ButterflyNet {
 	private File clustersPath;
 
 	private File docsPath;
+
+	private FlashServer flash;
 
 	/**
 	 * Stores the system configuration.
@@ -77,22 +81,19 @@ public class ButterflyNet {
 
 	private long mostRecentlySynchedTimestamp;
 
+	private NotesDatabase notesDatabase;
+
 	private File notesPath;
 
 	private File pagesPath;
 
+	private PhotosAndVideosDatabase photosDatabase;
 	private File photosPath;
-
 	private File settingsPath;
-
 	private File thumbs100Path;
-
 	private File thumbs128Path;
 	private File thumbs256Path;
 	private File thumbsPath;
-	private PageNavigationServer pageNavigationServer;
-	private NotesDatabase notesDatabase;
-	private PhotosAndVideosDatabase photosDatabase;
 
 	/**
 	 * The splash screen is shown at startup, before the JVM is invoked! See the program arguments...
@@ -114,10 +115,12 @@ public class ButterflyNet {
 				autoUpdateSynchedFileTimestamp);
 
 		// load the local page navigation server
-		pageNavigationServer = new PageNavigationServer(notesDatabase);
+		flash = new FlashServer(notesDatabase);
 
 		// finally, load the GUI and show the notes, photos, etc...
-		showFlashGUI();
+		apolloApp = new File("bin/BNet.exe"); // testing
+		// apolloApp = new File("BNet.exe"); // deployment
+		flash.showFlashGUI(apolloApp);
 	}
 
 	/**
@@ -275,24 +278,5 @@ public class ButterflyNet {
 
 	public void setMostRecentlySynchedTimestamp(long timestamp) {
 		mostRecentlySynchedTimestamp = timestamp;
-	}
-
-	/**
-	 * Opens the HTML page containing the Flex/Flash GUI.
-	 */
-	private void showFlashGUI() {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					if (Desktop.isDesktopSupported()) {
-						Desktop desktop = Desktop.getDesktop();
-						desktop.browse(new File("bin/ButterflyNet2.html").toURI());
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}).start();
 	}
 }

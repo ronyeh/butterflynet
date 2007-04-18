@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:ApolloApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" backgroundGradientColors="[#292929, #292929]" 
-	pageTitle="ButterflyNet2" creationComplete="constructBNet()">
+	pageTitle="ButterflyNet2" addedToStage="constructBNet();">
 	<mx:states>
 		<mx:State name="FirstTime">
 			<mx:AddChild position="lastChild">
@@ -13,122 +13,30 @@
 			</mx:AddChild>
 			<mx:RemoveChild target="{showByComboBox}"/>
 			<mx:RemoveChild target="{navVbox}"/>
+			<mx:SetProperty name="width" value="800"/>
+			<mx:SetProperty name="height" value="480"/>
 		</mx:State>
 	</mx:states>
 	<mx:Style source="styles/styles.css"/>
 	<mx:Script>
 		<![CDATA[
+			import butterflynet.ButterflyNetBackend;
 			import flash.filesystem.File;
 			import mx.core.UIComponent;
 			import flash.events.MouseEvent;
-			import butterflynet.ButterflyNetFlash;
 			import flash.display.StageDisplayState;
 			
-			private var bnet:ButterflyNetFlash;
+			private var bnet:ButterflyNetBackend;
 			private var container:UIComponent;
 
-			private var slideTimer:Timer;
 
 			private function constructBNet():void {
-				currentState = "FirstTime";
-				
-				
 				container = new UIComponent();
-				addChild(container);
-				bnet = new ButterflyNetFlash();
+				bnet = new ButterflyNetBackend(this);
 				container.addChild(bnet);
-				bnet.addParent(this);
-				
-				
-				/* In Flex Builder vs. Deployed:
-				Resource (Builder): C:\Documents and Settings\Ron Yeh\My Documents\Projects\ButterflyNet2\bin
-				Resource (Deployed): C:\Documents and Settings\Ron Yeh\Program Files\Stanford\ButterflyNet
-	
-				User: C:\Documents and Settings\Ron Yeh
-				Storage: C:\Documents and Settings\Ron Yeh\Application Data\butterflynet.ButterflyNet\Local Store
-				Documents: C:\Documents and Settings\Ron Yeh\My Documents
-				Desktop: C:\Documents and Settings\Ron Yeh\Desktop
-				Roots:
-					A:\
-					C:\
-					D:\
-					Z:\
-							
-				trace("User: " + File.userDirectory.nativePath);
-				trace("Resource: " + File.appResourceDirectory.nativePath);
-				trace("Storage: " + File.appStorageDirectory.nativePath);
-				trace("Documents: " + File.documentsDirectory.nativePath);
-				trace("Desktop: " + File.desktopDirectory.nativePath);
-				trace("Roots:");
-				for each (var f:File in File.listRootDirectories()) {
-					trace(f.nativePath);
-				}
-				*/
-				installDir.text = File.appResourceDirectory.nativePath;
+				addChild(container);
+				bnet.checkIfFirstTimeLoaded();				
 			}
-
-			private function clickHandler(event:MouseEvent):void {
-				trace("clickHandler");
-			}
-			
-			private function isFullScreen():Boolean {
-				return stage.displayState == StageDisplayState.FULL_SCREEN;
-			}
-			
-			private function toggleFullScreen(event:MouseEvent):void {
-				trace("toggleFullScreen");
-				if (isFullScreen()) {
-					// stop slideshow
-					// kill the timer
-					slideTimer.stop();
-					slideTimer = null;					
-
-					stage.displayState = StageDisplayState.NORMAL;
-					setVisibilityOfControls(true);
-				} else {
-					// start slideshow
-					slideTimer = new Timer(1200);
-					slideTimer.addEventListener(TimerEvent.TIMER, timerHandler);
-					slideTimer.start();
-
-					stage.displayState = StageDisplayState.FULL_SCREEN;
-					setVisibilityOfControls(false);
-				}
-			}
-			
-			private function timerHandler(event:TimerEvent):void {
-				bnet.next();
-			}
-
-			public function setVisibilityOfControls(vis:Boolean):void {
-				showByComboBox.visible = vis;
-				zoomInButton.visible = vis;
-				zoomOutButton.visible = vis;
-				zoomDefaultButton.visible = vis;
-			}
-			
-			public function zoomIn():void {
-				bnet.scaleX *= 1.25;
-				bnet.scaleY *= 1.25;
-			}
-			public function resetZoom():void {
-				bnet.scaleX = 1;
-				bnet.scaleY = 1;
-				bnet.recenter();
-			}
-			public function zoomOut():void {
-				bnet.scaleX *= .8;
-				bnet.scaleY *= .8;
-			}
-
-			public function thinnerStrokes():void {
-				bnet.thinnerStrokes();
-			}
-			
-			public function widerStrokes():void {
-				bnet.widerStrokes();
-			}
-			
 		]]>
 	</mx:Script>
 	<mx:ComboBox color="#000000" id="showByComboBox" right="10" width="160" top="10">
@@ -143,11 +51,11 @@
 			<mx:Button label="&lt;" id="prevButton" fontWeight="bold" click="bnet.prev()"/>
 			<mx:Button label="&gt;" id="nextButton" fontWeight="bold" click="bnet.next()"/>
 		</mx:HBox>
-		<mx:Button label="Slide Show" click="toggleFullScreen(event);" id="slideShowButton"/>
+		<mx:Button label="Slide Show" click="bnet.toggleFullScreen();" id="slideShowButton"/>
 		<mx:HBox>
-			<mx:Button label="-" id="zoomOutButton" click="zoomOut()"/>
-			<mx:Button label="100%" id="zoomDefaultButton" click="resetZoom()"/>
-			<mx:Button label="+" id="zoomInButton" click="zoomIn()"/>
+			<mx:Button label="-" id="zoomOutButton" click="bnet.zoomOut()"/>
+			<mx:Button label="100%" id="zoomDefaultButton" click="bnet.resetZoom()"/>
+			<mx:Button label="+" id="zoomInButton" click="bnet.zoomIn()"/>
 		</mx:HBox>
 	</mx:VBox>
 </mx:ApolloApplication>
