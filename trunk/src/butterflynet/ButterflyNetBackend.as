@@ -143,8 +143,7 @@ package butterflynet {
 			recenter();
 		}
 		public function recenter():void {
-			var rect:Rectangle = inkWell.getBounds(this);
-			inkWell.recenter(theStage);
+			inkWell.rescaleAndrecenter(theParent.inkCanvas);
 		}
 		//////////////////////////////////////////////////////////////////////////////
 		private function isFullScreen():Boolean {
@@ -191,8 +190,8 @@ package butterflynet {
 	        	}
 	        	inkWell = parser.ink;
 	        	inkWell.addPageDecorations();
-	        	inkWell.recenter(theStage);
 	        	addChildAt(inkWell, 0);
+	        	inkWell.rescaleAndrecenter(theParent.inkCanvas);
 			} else {
 	        	trace(msgXML.toXMLString());
 			}

@@ -13,12 +13,11 @@
 			private var bnet:ButterflyNetBackend;
 			private var container:UIComponent;
 
-
 			private function constructBNet():void {
 				container = new UIComponent();
 				bnet = new ButterflyNetBackend(this);
 				container.addChild(bnet);
-				addChildAt(container, 0);
+				inkCanvas.addChildAt(container, 0);
 				//bnet.checkIfFirstTimeLoaded();				
 			}
 		]]>
@@ -50,6 +49,10 @@
 			</mx:AddChild>
 		</mx:State>
 	</mx:states>
+
+	<mx:Canvas x="10" y="10" width="881" height="520" borderColor="#ffffff" id="inkCanvas">
+	</mx:Canvas>
+
 	<mx:VBox left="10" bottom="10" id="navVbox">
 		<mx:ComboBox color="#000000" id="showByComboBox" width="170" left="10" bottom="68">
 			<mx:ArrayCollection id="showNotesAs">
