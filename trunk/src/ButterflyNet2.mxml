@@ -50,7 +50,7 @@
 		</mx:State>
 	</mx:states>
 
-	<mx:Canvas x="10" y="10" width="881" height="520" borderColor="#ffffff" id="inkCanvas">
+	<mx:Canvas borderColor="#ffffff" id="inkCanvas" left="0" right="0" top="0" bottom="198">
 	</mx:Canvas>
 
 	<mx:VBox left="10" bottom="10" id="navVbox">

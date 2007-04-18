@@ -71,28 +71,30 @@ public class FlashServer {
 		this(DEFAULT_PORT, notesDatabase);
 	}
 
-	private void handleCurrent() {
-		File nextPageDir = notesDB.getCurrPageDir();
-		// figure out which files are there... and send them in XML back to the Flash GUI...
-		List<File> pageFiles = FileUtils.listVisibleFiles(nextPageDir);
-		DebugUtils.println("Sending these page files back: " + pageFiles);
-		flash.sendMessage(makeInkXMLMessageOfPageFiles(pageFiles));
-	}
-
-	private void handleNext() {
-		File nextPageDir = notesDB.getNextPageDir();
-		// figure out which files are there... and send them in XML back to the Flash GUI...
-		List<File> pageFiles = FileUtils.listVisibleFiles(nextPageDir);
-		DebugUtils.println("Sending these page files back: " + pageFiles);
-		flash.sendMessage(makeInkXMLMessageOfPageFiles(pageFiles));
-	}
-
-	private void handlePrev() {
-		File prevPageDir = notesDB.getPrevPageDir();
+	/**
+	 * @param prevPageDir
+	 */
+	private void composeAndSendInk(File prevPageDir) {
 		// figure out which files are there... and send them in XML back to the Flash GUI...
 		List<File> pageFiles = FileUtils.listVisibleFiles(prevPageDir);
 		DebugUtils.println("Sending these page files back: " + pageFiles);
 		flash.sendMessage(makeInkXMLMessageOfPageFiles(pageFiles));
+		
+	}
+
+	private void handleCurrent() {
+		File nextPageDir = notesDB.getCurrPageDir();
+		composeAndSendInk(nextPageDir);
+	}
+
+	private void handleNext() {
+		File nextPageDir = notesDB.getNextPageDir();
+		composeAndSendInk(nextPageDir);
+	}
+
+	private void handlePrev() {
+		File prevPageDir = notesDB.getPrevPageDir();
+		composeAndSendInk(prevPageDir);
 	}
 
 	/**
@@ -102,13 +104,16 @@ public class FlashServer {
 	 * @return
 	 */
 	private String makeInkXMLMessageOfPageFiles(List<File> pageFiles) {
-		StringBuilder xml = new StringBuilder();
-		xml.append("<ink>");
+		long minTS = Long.MAX_VALUE;
+		long maxTS = Long.MIN_VALUE;
+		Ink allInk = new Ink();
 		for (File f : pageFiles) {
-			xml.append(new Ink(f).getInnerXML());
+			Ink pageInk = new Ink(f);
+			minTS = Math.min(pageInk.getFirstTimestamp(), minTS);
+			maxTS = Math.max(pageInk.getLastTimestamp(), maxTS);
+			allInk.append(pageInk);
 		}
-		xml.append("</ink>");
-		return xml.toString();
+		return allInk.toXMLString(false);
 	}
 
 	/**
