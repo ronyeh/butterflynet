@@ -13,6 +13,7 @@ import butterflynet.content.DocumentsDatabase;
 import butterflynet.content.NotesDatabase;
 import butterflynet.content.PhotosAndVideosDatabase;
 import butterflynet.navigation.FlashServer;
+import edu.stanford.hci.r3.flash.FlashSecurityRegistration;
 import edu.stanford.hci.r3.util.DebugUtils;
 import edu.stanford.hci.r3.util.graphics.SplashScreenUtils;
 
@@ -101,6 +102,8 @@ public class ButterflyNet {
 	 * The splash screen is shown at startup, before the JVM is invoked! See the program arguments...
 	 */
 	public ButterflyNet() {
+		
+		new FlashSecurityRegistration("bnet.cfg").registerPaths();
 
 		// read the properties files, and construct any directories that need to exist
 		readConfigProperties();

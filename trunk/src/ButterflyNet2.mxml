@@ -45,12 +45,12 @@
 			<mx:RemoveChild target="{relatedItemsBar}"/>
 			<mx:SetProperty target="{toggleRelatedItems}" name="label" value="Show Related Items"/>
 			<mx:AddChild position="lastChild">
-				<mx:Label right="20" bottom="50" text="15 Items" id="numItems"/>
+				<mx:Label right="20" bottom="50" text="0 Items" id="numItems"/>
 			</mx:AddChild>
 		</mx:State>
 	</mx:states>
 
-	<mx:Canvas borderColor="#ffffff" id="inkCanvas" left="0" right="0" top="-4" bottom="202">
+	<mx:Canvas borderColor="#ffffff" id="inkCanvas" left="0" right="0" top="0" bottom="202">
 	</mx:Canvas>
 
 	<mx:Image right="10" top="10" id="img1" width="200" height="150"/>

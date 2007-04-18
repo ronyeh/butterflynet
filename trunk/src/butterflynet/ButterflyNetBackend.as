@@ -201,8 +201,6 @@ package butterflynet {
 		// processes data sent over from the java code
         private function msgListener(event:DataEvent):void {
         	
-        	var relatedFiles:Array = new Array();
-        	theParent.relatedFiles.dataProvider = relatedFiles;
         	
         	var msgXML:XML = new XML(event.text);
 			if (event.text.indexOf("<ink") == 0) {
@@ -217,6 +215,8 @@ package butterflynet {
 	        	addPageDecorations();
 			} else if (event.text.indexOf("<photosAndVideos")==0) {
 				
+	        	var relatedFiles:Array = new Array();
+
 				var rootPath:String = msgXML.@rootPath;
 				trace("Photos And Videos: " + msgXML.@count + ", " + msgXML.@rootPath);
 				// get all the photos (somewhere down the XML tree)
@@ -241,6 +241,10 @@ package butterflynet {
 						photosToLoad.push(photoFile);
 					}
 				}	
+	        	theParent.relatedFiles.dataProvider = relatedFiles;
+	        	if (theParent.numItems!=null) {
+	        		theParent.numItems.text = relatedFiles.length + " related items";
+	        	}
 				loadPhotos(photosToLoad);
 			} 
 			else {
