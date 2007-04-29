@@ -23,9 +23,11 @@
 		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>com.adobe.flexbuilder.project.flexnature</nature>
+		<nature>com.adobe.flexbuilder.apollo.apollonature</nature>
 		<nature>com.adobe.flexbuilder.project.actionscriptnature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>com.adobe.flexbuilder.project.flexnature</nature>
+		<nature>org.asdt.core.ASNature</nature>
 	</natures>
 	<linkedResources>
 		<link>

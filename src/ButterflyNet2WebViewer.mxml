@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" backgroundGradientColors="[#292929, #292929]" 
+	pageTitle="ButterflyNet2" addedToStage="constructBNet();">
+	<mx:Style source="styles/styles.css"/>
+	<mx:Script>
+		<![CDATA[
+			import mx.core.UIComponent;
+			import flash.events.MouseEvent;
+			import flash.display.StageDisplayState;
+			
+			private var container:UIComponent;
+
+			private function constructBNet():void {
+				container = new UIComponent();
+				inkCanvas.addChildAt(container, 0);
+			}
+		]]>
+	</mx:Script>
+	<mx:Fade id="fadeIn" alphaFrom="0" alphaTo="1" duration="200"/>
+	<mx:Fade id="fadeOut" alphaFrom="1" alphaTo="0" duration="200"/>
+	<mx:states>
+		<mx:State name="RelatedItemsHidden">
+			<mx:RemoveChild target="{relatedItemsBar}"/>
+			<mx:SetProperty target="{toggleRelatedItems}" name="label" value="Show Related Items"/>
+			<mx:AddChild position="lastChild">
+				<mx:Label right="20" bottom="50" text="0 Items" id="numItems"/>
+			</mx:AddChild>
+		</mx:State>
+	</mx:states>
+
+	<mx:Canvas borderColor="#ffffff" id="inkCanvas" left="0" right="0" top="0" bottom="202">
+	</mx:Canvas>
+
+	<mx:VBox left="10" bottom="10" id="navVbox">
+		<mx:ComboBox color="#000000" id="showByComboBox" width="170" left="10" bottom="68">
+			<mx:ArrayCollection id="showNotesAs">
+				<mx:Object label="Pages" data="ShowPages"/>
+				<mx:Object label="Clusters" data="ShowClusters"/>
+				<mx:Object label="Timeline" data="ShowTimeline"/>
+			</mx:ArrayCollection>
+		</mx:ComboBox>
+		<mx:HBox width="100%">
+			<mx:Button label="&lt;" id="prevButton" fontWeight="bold"/>
+			<mx:Button label="&gt;" id="nextButton" fontWeight="bold"/>
+			<mx:Button label="Auto" id="slideShowButton" width="100%" color="#000000"/>
+		</mx:HBox>
+		<mx:HBox>
+			<mx:Button label="-" id="zoomOutButton" color="#000000"/>
+			<mx:Button label="100%" id="zoomDefaultButton" color="#000000"/>
+			<mx:Button label="+" id="zoomInButton" color="#000000"/>
+		</mx:HBox>
+	</mx:VBox>
+	<mx:TabNavigator right="10" bottom="10" fontSize="12" color="#4b4b4b" backgroundColor="#DDDDDD" 
+		cornerRadius="0" fillColors="[0xDDDDDD, 0xCCCCCC, 0xDDDDDD, 0xEEEEEE]" id="relatedItemsBar"
+		hideEffect="{fadeOut}" showEffect="{fadeIn}" removedEffect="{fadeOut}" addedEffect="{fadeIn}" selectedIndex="2" left="648" top="10">
+		<mx:Canvas label="Related Items" width="100%" height="100%" backgroundColor="#333333">
+		</mx:Canvas>
+		<mx:Canvas label="Photos" width="100%" height="100%" backgroundColor="#333333">
+		</mx:Canvas>
+		<mx:Canvas label="Audio" width="100%" height="100%" backgroundColor="#333333">
+		</mx:Canvas>
+		<mx:Canvas label="Files" width="100%" height="100%" backgroundColor="#333333">
+		</mx:Canvas>
+	</mx:TabNavigator>
+	<mx:Button label="Hide" right="20" bottom="20" fontSize="12" color="#000000" id="toggleRelatedItems"/>
+</mx:Application>
