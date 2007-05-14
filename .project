@@ -31,7 +31,7 @@
 		<link>
 			<name>[source path] src</name>
 			<type>2</type>
-			<location>PROJECTS/PaperToolkit/flash/src</location>
+			<locationURI>PROJECTS/PaperToolkit/flash/src</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
