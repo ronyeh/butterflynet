@@ -1,4 +1,4 @@
-package butterflynet {
+package tools {
 
 	import flash.events.*;
 	import flash.net.*;
