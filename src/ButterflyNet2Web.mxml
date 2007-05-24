@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" backgroundGradientColors="[#292929, #292929]" 
+	pageTitle="ButterflyNet2" addedToStage="constructBNet();">
+	<mx:Style source="styles/styles.css"/>
+	<mx:Script>
+		<![CDATA[
+			import mx.core.UIComponent;
+			import flash.events.MouseEvent;
+			import flash.display.StageDisplayState;
+			
+			private var container:UIComponent;
+
+			private function constructBNet():void {
+				container = new UIComponent();
+				addChildAt(container, 0);
+			}
+		]]>
+	</mx:Script>
+</mx:Application>

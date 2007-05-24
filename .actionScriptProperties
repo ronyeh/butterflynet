@@ -26,6 +26,7 @@
   <applications>
     <application path="ButterflyNet2.mxml"/>
     <application path="ButterflyNet2WebViewer.mxml"/>
+    <application path="ButterflyNet2Web.mxml"/>
   </applications>
   <buildCSSFiles/>
 </actionScriptProperties>
