@@ -3,13 +3,13 @@ package butterflynet.content;
 import java.io.File;
 import java.util.List;
 
+import papertoolkit.pattern.coordinates.PageAddress;
+import papertoolkit.pen.ink.Ink;
+import papertoolkit.pen.synch.PenSynch;
+import papertoolkit.pen.synch.PenSynchManager;
+import papertoolkit.util.DebugUtils;
+import papertoolkit.util.files.FileUtils;
 import butterflynet.ButterflyNet;
-import edu.stanford.hci.r3.pattern.coordinates.PageAddress;
-import edu.stanford.hci.r3.pen.batch.PenSynch;
-import edu.stanford.hci.r3.pen.batch.PenSynchManager;
-import edu.stanford.hci.r3.pen.ink.Ink;
-import edu.stanford.hci.r3.util.DebugUtils;
-import edu.stanford.hci.r3.util.files.FileUtils;
 
 /**
  * <p>

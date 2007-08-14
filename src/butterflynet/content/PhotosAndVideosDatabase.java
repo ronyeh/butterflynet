@@ -8,13 +8,14 @@ import java.util.List;
 
 import javax.media.jai.PlanarImage;
 
+import papertoolkit.util.DebugUtils;
+import papertoolkit.util.SystemUtils;
+import papertoolkit.util.files.FileUtils;
+import papertoolkit.util.files.SortDirection;
+import papertoolkit.util.graphics.ImageCache;
+import papertoolkit.util.graphics.JAIUtils;
+
 import butterflynet.ButterflyNet;
-import edu.stanford.hci.r3.util.DebugUtils;
-import edu.stanford.hci.r3.util.SystemUtils;
-import edu.stanford.hci.r3.util.files.FileUtils;
-import edu.stanford.hci.r3.util.files.SortDirection;
-import edu.stanford.hci.r3.util.graphics.ImageCache;
-import edu.stanford.hci.r3.util.graphics.JAIUtils;
 
 /**
  * <p>

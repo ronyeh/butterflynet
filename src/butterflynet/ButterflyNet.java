@@ -9,13 +9,14 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Properties;
 
+import papertoolkit.flash.FlashSecurityRegistration;
+import papertoolkit.util.DebugUtils;
+import papertoolkit.util.graphics.SplashScreenUtils;
+
 import butterflynet.content.DocumentsDatabase;
 import butterflynet.content.NotesDatabase;
 import butterflynet.content.PhotosAndVideosDatabase;
 import butterflynet.navigation.FlashServer;
-import edu.stanford.hci.r3.flash.FlashSecurityRegistration;
-import edu.stanford.hci.r3.util.DebugUtils;
-import edu.stanford.hci.r3.util.graphics.SplashScreenUtils;
 
 /**
  * <p>
