@@ -6,7 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import edu.stanford.hci.r3.util.DebugUtils;
+import papertoolkit.util.DebugUtils;
+
 
 /**
  * <p>

@@ -3,13 +3,14 @@ package butterflynet.navigation;
 import java.io.File;
 import java.util.List;
 
+import papertoolkit.flash.FlashCommand;
+import papertoolkit.flash.FlashCommunicationServer;
+import papertoolkit.pen.ink.Ink;
+import papertoolkit.util.DebugUtils;
+import papertoolkit.util.files.FileUtils;
+
 import butterflynet.content.NotesDatabase;
 import butterflynet.content.PhotosAndVideosDatabase;
-import edu.stanford.hci.r3.flash.FlashCommand;
-import edu.stanford.hci.r3.flash.FlashCommunicationServer;
-import edu.stanford.hci.r3.pen.ink.Ink;
-import edu.stanford.hci.r3.util.DebugUtils;
-import edu.stanford.hci.r3.util.files.FileUtils;
 
 /**
  * <p>

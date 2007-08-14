@@ -5,8 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 
-import edu.stanford.hci.r3.flash.whiteboard.FlashWhiteboard;
-import edu.stanford.hci.r3.pen.Pen;
+import papertoolkit.flash.whiteboard.FlashWhiteboard;
+import papertoolkit.pen.Pen;
+
 
 /**
  * <p>
